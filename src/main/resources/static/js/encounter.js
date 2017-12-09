@@ -39,30 +39,49 @@ $('#add-monster button.btn-primary').on('click', function (evt) {
 
     var form = $('#add-monster div.active form');
 
-    var type = 'MONSTER';
-    var description = $('input[name=description]', form).val();
+    var type = $('input[name=type]', form).val();
     var initiative = parseInt($('input[name=initiative]', form).val());
-    var armorClass = parseInt($('input[name=ac]', form).val());
-    var hitPoints = parseInt($('input[name=hp]', form).val());
 
-    $.ajax({
-        url: '/encounter/' + encounterId,
-        type: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify({
-            id: 0,
-            active: false,
-            type: type,
-            initiative: initiative,
-            description: description,
-            armorClass: armorClass,
-            hitPoints: hitPoints,
-            conditions: [],
-            notes: ''
-        }),
-        success: function (result) {
-            location = '/encounter/' + encounterId;
-        }
-    });
+    if (type === 'MONSTER') {
+        var description = $('input[name=description]', form).val();
+        var armorClass = parseInt($('input[name=ac]', form).val());
+        var hitPoints = parseInt($('input[name=hp]', form).val());
+
+        $.ajax({
+            url: '/encounter/' + encounterId,
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({
+                id: 0,
+                active: false,
+                type: type,
+                initiative: initiative,
+                description: description,
+                armorClass: armorClass,
+                hitPoints: hitPoints,
+                conditions: [],
+                notes: ''
+            }),
+            success: function (result) {
+                location = '/encounter/' + encounterId;
+            }
+        });
+
+    } else {
+        var memberId = parseInt($('select[name=member]', form).val());
+
+        $.ajax({
+            url: '/encounter/' + encounterId + "/party/",
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({memberId: memberId, initiative: initiative}),
+            success: function (result) {
+                location = '/encounter/' + encounterId;
+            }
+        });
+    }
 });
+
+// Math.round(Math.random() * 100) % 20

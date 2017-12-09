@@ -1,16 +1,32 @@
 package com.stehno.dd.campaigntools.service
 
-import com.stehno.dd.campaigntools.model.ClassLevel
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.stehno.dd.campaigntools.model.PartyMember
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.io.File
 
 @Service
-class PartyService {
+class PartyService(@Autowired private val objectMapper: ObjectMapper,
+                   @Value("\${repository.directory}") private var directory: File) {
+
+    private val party: List<PartyMember>
+
+    init {
+        val memberFile = File(directory, "party-members.json")
+        party = when {
+            memberFile.exists() -> objectMapper.readValue(memberFile)
+            else -> mutableListOf()
+        }
+    }
 
     fun retrieveAll(): List<PartyMember> {
-        return arrayListOf(
-            PartyMember(100, "Braak", "Chris", arrayListOf(ClassLevel("Barbarian", 8)), "Half-Orc", "Chaotic Good", 12, 11),
-            PartyMember(200, "Venturan", "Derek", arrayListOf(ClassLevel("Fighter", 8)), "Human", "Lawful Good", 15, 9)
-        )
+        return party
+    }
+
+    fun retrieveMember(memberId: Long): PartyMember {
+        return party.first { it.id == memberId }
     }
 }

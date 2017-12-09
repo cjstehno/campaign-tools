@@ -64,4 +64,16 @@ class EncounterController {
 
         return ResponseEntity.ok(Unit)
     }
+
+    @PostMapping(path = ["/encounter/{encounterId}/party"], consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
+    fun addPartyMember(@PathVariable("encounterId") encounterId: Long,
+                       @RequestBody info: AddedPartyMember): ResponseEntity<Unit> {
+        log.info("Adding {} to the encounter", info)
+
+        encounterService.addParticipantFromParty(encounterId, partyService.retrieveMember(info.memberId), info.initiative)
+
+        return ResponseEntity.ok(Unit)
+    }
 }
+
+data class AddedPartyMember(val memberId: Long, val initiative: Int)

@@ -8,6 +8,11 @@ data class PartyMember(val id: Long,
                        val race: String,
                        val alignment: String,
                        val armorClass: Int,
-                       val perception: Int)
+                       val perception: Int) {
+
+    fun getDisplayName(): String {
+        return "$characterName ($playerName)"
+    }
+}
 
 data class ClassLevel(val name: String, val level: Int)

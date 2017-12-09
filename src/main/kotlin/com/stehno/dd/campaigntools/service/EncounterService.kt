@@ -3,6 +3,7 @@ package com.stehno.dd.campaigntools.service
 import com.stehno.dd.campaigntools.model.Encounter
 import com.stehno.dd.campaigntools.model.EncounterParticipant
 import com.stehno.dd.campaigntools.model.ParticipantType.*
+import com.stehno.dd.campaigntools.model.PartyMember
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -53,6 +54,33 @@ class EncounterService {
                 participant.hitPoints,
                 participant.conditions,
                 participant.notes
+            ))
+
+            encounters[encounterId] = Encounter(
+                encounter.id,
+                encounter.name,
+                TreeSet(updated),
+                encounter.finished
+            )
+        }
+    }
+
+    fun addParticipantFromParty(encounterId: Long, partyMember: PartyMember, initiative: Int) {
+        val encounter: Encounter? = encounters[encounterId]
+        if (encounter != null) {
+            val nextId = encounter.participants.maxBy { it.id }?.id ?: 1
+
+            val updated = encounter.participants.toMutableSet()
+            updated.add(EncounterParticipant(
+                nextId,
+                false,
+                PARTY_MEMBER,
+                initiative,
+                partyMember.getDisplayName(),
+                partyMember.armorClass,
+                0,
+                setOf(),
+                ""
             ))
 
             encounters[encounterId] = Encounter(

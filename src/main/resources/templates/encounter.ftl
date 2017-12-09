@@ -180,6 +180,7 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="monster-new-panel">
                             <form>
+                                <input type="hidden" name="type" value="MONSTER" />
                                 <div class="form-group">
                                     <label>Description</label>
                                     <input type="text" class="form-control" name="description" placeholder="Description">
@@ -201,6 +202,7 @@
 
                         <div role="tabpanel" class="tab-pane" id="monster-existing-panel">
                             <form>
+                                <input type="hidden" name="type" value="MONSTER" />
                                 <div class="form-group">
                                     <label>Template</label>
                                     <select name="monster-template" class="form-control">
@@ -231,9 +233,10 @@
 
                         <div role="tabpanel" class="tab-pane" id="party-add-panel">
                             <form>
+                                <input type="hidden" name="type" value="PARTY_MEMBER" />
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <select name="party-member" class="form-control">
+                                    <select name="member" class="form-control">
                                         <#list party as member>
                                             <option value="${member.id}">${member.characterName} (${member.playerName})</option>
                                         </#list>
