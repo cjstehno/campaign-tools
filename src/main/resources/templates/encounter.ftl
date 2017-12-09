@@ -24,7 +24,9 @@
     <title>DM Campaign Tools</title>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/common.css" rel="stylesheet" />
+    <link href="/css/encounter.css" rel="stylesheet" />
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -35,11 +37,13 @@
 </head>
 <body>
 
+<#include "navbar.ftl" />
+
 <div class="container-fluid">
 
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12">
-            <h1><img src="/img/encounter.png" style="width: 64px;"/> Encounter: Mere of Dead Men</h1>
+            <h1 data-id="${encounter.id}"><img src="/img/encounter.png" style="width: 64px;"/> Encounter: ${encounter.name}</h1>
         </div>
     </div>
 
@@ -119,13 +123,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <#list encounter as combatant>
-                    <tr>
+                    <#list encounter.participants as combatant>
+                    <tr data-id="${combatant.id}">
                         <td>
                             <#if combatant.active><span class="glyphicon glyphicon-chevron-right" style="color: green;" title="Active combatant"></span><#else>&nbsp;</#if>
                         </td>
                         <td>
-                            <img src="img/${combatant.type.id}.png" style="width:32px" title="${combatant.type}"/>
+                            <img src="/img/${combatant.type.id}.png" style="width:32px" title="${combatant.type}"/>
                         </td>
                         <td><#if combatant.initiative &gt; 0>${combatant.initiative}<#else><em>n/a</em></#if></td>
                         <td>${combatant.description}</td>
@@ -141,8 +145,7 @@
                             <a class="btn btn-sm btn-primary" href="#" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
                             <a class="btn btn-sm btn-danger" href="#" role="button" data-toggle="modal" data-target="#kill-monster"><span
                                 class="glyphicon glyphicon-ban-circle"></span> Kill</a>
-                            <a class="btn btn-sm btn-warning" href="#" role="button" data-toggle="modal" data-target="#remove-monster"><span
-                                class="glyphicon glyphicon-remove"></span> Remove</a>
+                            <a class="remove-button btn btn-sm btn-warning" href="#" role="button"><span class="glyphicon glyphicon-remove"></span> Remove</a>
                         </td>
                     </tr>
                     </#list>
@@ -168,14 +171,45 @@
                 <div>
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#monster-add-panel" role="tab" data-toggle="tab">Monster</a></li>
+                        <li role="presentation" class="active"><a href="#monster-new-panel" role="tab" data-toggle="tab">New Monster</a></li>
+                        <li role="presentation"><a href="#monster-existing-panel" role="tab" data-toggle="tab">Existing Monster</a></li>
                         <li role="presentation"><a href="#party-add-panel" role="tab" data-toggle="tab">Party Member</a></li>
                     </ul>
 
                     <!-- Tab panes -->
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="monster-add-panel">
+                        <div role="tabpanel" class="tab-pane active" id="monster-new-panel">
                             <form>
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <input type="text" class="form-control" name="description" placeholder="Description">
+                                </div>
+                                <div class="form-group">
+                                    <label>Initiative</label>
+                                    <input type="number" class="form-control" name="initiative" placeholder="Initiative">
+                                </div>
+                                <div class="form-group">
+                                    <label>Armor Class</label>
+                                    <input type="number" class="form-control" name="ac" placeholder="Armor Class">
+                                </div>
+                                <div class="form-group">
+                                    <label>Hit Points</label>
+                                    <input type="number" class="form-control" name="hp" placeholder="Hit Points">
+                                </div>
+                            </form>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="monster-existing-panel">
+                            <form>
+                                <div class="form-group">
+                                    <label>Template</label>
+                                    <select name="monster-template" class="form-control">
+                                        <option>Select Monster</option>
+                                        <#list monsters as monster>
+                                            <option value="${monster.url}">${monster.name}</option>
+                                        </#list>
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <label>Description</label>
                                     <input type="text" class="form-control" name="description" placeholder="Description">
@@ -267,7 +301,7 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="js/bootstrap.min.js"></script>
-<script src="js/encounter.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/encounter.js"></script>
 </body>
 </html>

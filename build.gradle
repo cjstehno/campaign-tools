@@ -31,7 +31,7 @@ compileTestKotlin {
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -42,6 +42,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     runtime 'org.springframework.boot:spring-boot-devtools'
+
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
 
     testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
     testCompile 'org.springframework.boot:spring-boot-starter-test'

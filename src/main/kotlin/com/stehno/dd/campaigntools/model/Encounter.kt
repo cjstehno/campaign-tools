@@ -1,5 +1,12 @@
 package com.stehno.dd.campaigntools.model
 
+import java.util.*
+
+data class Encounter(val id: Long,
+                     val name: String,
+                     val participants: TreeSet<EncounterParticipant>,
+                     val finished: Boolean = false)
+
 data class EncounterParticipant(val id: Long,
                                 val active: Boolean,
                                 val type: ParticipantType,
@@ -8,7 +15,14 @@ data class EncounterParticipant(val id: Long,
                                 val armorClass: Int,
                                 val hitPoints: Int?,
                                 val conditions: Set<String>,
-                                val notes: String)
+                                val notes: String) : Comparable<EncounterParticipant> {
+
+    override fun compareTo(other: EncounterParticipant): Int = when {
+        other.initiative > initiative -> 1
+        other.initiative < initiative -> -1
+        else -> 0
+    }
+}
 
 enum class ParticipantType(val id: String) {
     MONSTER("monster"),
