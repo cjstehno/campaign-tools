@@ -61,6 +61,7 @@ license {
 
     excludes([
         '**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg',
+        '**/*.min.js',
         '**/bootstrap.*', '**/bootstrap-theme.css', '**/glyphicons-halflings-regular.*'
     ])
 }
