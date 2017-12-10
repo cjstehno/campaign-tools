@@ -1,10 +1,7 @@
 package com.stehno.dd.campaigntools.service
 
+import com.stehno.dd.campaigntools.model.*
 import com.stehno.dd.campaigntools.model.Condition.PRONE
-import com.stehno.dd.campaigntools.model.Encounter
-import com.stehno.dd.campaigntools.model.MonsterEncounterParticipant
-import com.stehno.dd.campaigntools.model.PartyMember
-import com.stehno.dd.campaigntools.model.PartyMemberEncounterParticipant
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -14,7 +11,7 @@ class EncounterService {
     private val encounters = mutableMapOf<Long, Encounter>(
         Pair(100, Encounter(100, "Old Roadhouse", TreeSet(setOf(
             MonsterEncounterParticipant(100, 18, "Bugbear", 10, 14, setOf(), false),
-            MonsterEncounterParticipant(200, 15, "Bugbear", 10, 12, setOf(), false),
+            MonsterEncounterParticipant(200, 15, "Bugbear", 10, 12, setOf(), true),
             MonsterEncounterParticipant(300, 8, "Bugbear", 10, 7, setOf(PRONE), false)
         ))))
     )
@@ -76,6 +73,90 @@ class EncounterService {
                 encounter.id,
                 encounter.name,
                 TreeSet(updated),
+                encounter.finished
+            )
+        }
+    }
+
+    fun adjustHp(encounterId: Long, participantId: Long, hitPoints: Int?) {
+        val encounter: Encounter? = encounters[encounterId]
+        if (encounter != null) {
+            val participants = TreeSet<EncounterParticipant>(encounter.participants.map { p ->
+                MonsterEncounterParticipant(
+                    p.id,
+                    p.initiative,
+                    p.description,
+                    p.armorClass,
+                    if (p.id == participantId) {
+                        hitPoints
+                    } else {
+                        p.hitPoints
+                    },
+                    p.conditions,
+                    p.active
+                )
+            })
+
+            encounters[encounterId] = Encounter(
+                encounter.id,
+                encounter.name,
+                participants,
+                encounter.finished
+            )
+        }
+    }
+
+    fun updateDescription(encounterId: Long, participantId: Long, description: String?) {
+        val encounter: Encounter? = encounters[encounterId]
+        if (encounter != null) {
+            val participants = TreeSet<EncounterParticipant>(encounter.participants.map { p ->
+                MonsterEncounterParticipant(
+                    p.id,
+                    p.initiative,
+                    if (!description.isNullOrBlank() && p.id == participantId) {
+                        description!!
+                    } else {
+                        p.description
+                    },
+                    p.armorClass,
+                    p.hitPoints,
+                    p.conditions,
+                    p.active
+                )
+            })
+
+            encounters[encounterId] = Encounter(
+                encounter.id,
+                encounter.name,
+                participants,
+                encounter.finished
+            )
+        }
+    }
+
+    fun updateConditions(encounterId: Long, participantId: Long, conditions: Array<String>?) {
+        val encounter: Encounter? = encounters[encounterId]
+        if (encounter != null) {
+            val participants = TreeSet<EncounterParticipant>(encounter.participants.map { p ->
+                MonsterEncounterParticipant(
+                    p.id,
+                    p.initiative,
+                    p.description,
+                    p.armorClass,
+                    p.hitPoints,
+                    if (conditions != null && p.id == participantId) {
+                        TreeSet(conditions.map { c -> Condition.valueOf(c) })
+                    } else {
+                        p.conditions
+                    },
+                    p.active
+                )
+            })
+
+            encounters[encounterId] = Encounter(
+                encounter.id,
+                encounter.name,
+                participants,
                 encounter.finished
             )
         }

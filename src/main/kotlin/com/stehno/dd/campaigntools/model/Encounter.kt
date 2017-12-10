@@ -18,8 +18,24 @@ enum class ParticipantType(val id: String) {
 }
 
 enum class Condition {
-    BLINDED, CHARMED, DEAFENED, FATIGUED, FRIGHTENED, GRAPPLED, INCAPACITATED, INVISIBLE, PARALYSED,
-    PETRIFIED, POISONED, PRONE, RESTRAINED, STUNNED, UNCONSCIOUS, EXHAUSTION
+    BLINDED,
+    CHARMED,
+    DEAFENED,
+    FATIGUED,
+    FRIGHTENED,
+    GRAPPLED,
+    INCAPACITATED,
+    INVISIBLE,
+    PARALYSED,
+    PETRIFIED,
+    POISONED,
+    PRONE,
+    RESTRAINED,
+    STUNNED,
+    UNCONSCIOUS,
+    EXHAUSTION;
+
+    var label: String = name.toLowerCase().capitalize()
 }
 
 interface EncounterParticipant : Comparable<EncounterParticipant> {

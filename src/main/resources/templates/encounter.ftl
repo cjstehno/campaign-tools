@@ -80,14 +80,16 @@
                         <td>${member.alignment}</td>
                         <td>${member.armorClass}</td>
                         <td>${member.perception}</td>
-                        <td class="pull-right">
-                            <#if encounter.containsPartyMember(member.id) >
-                                <a class="add-party-member-button btn btn-sm btn-default disabled" href="#" role="button"><span
-                                    class="glyphicon glyphicon-plus"></span> Add to Encounter</a>
-                            <#else>
-                                <a class="add-party-member-button btn btn-sm btn-default" href="#" role="button"><span
-                                    class="glyphicon glyphicon-plus"></span> Add to Encounter</a>
-                            </#if>
+                        <td>
+                            <div class="pull-right">
+                                <#if encounter.containsPartyMember(member.id) >
+                                    <a class="add-party-member-button btn btn-sm btn-default disabled" href="#" role="button"><span
+                                        class="glyphicon glyphicon-plus" title="Add to Encounter"></span></a>
+                                <#else>
+                                    <a class="add-party-member-button btn btn-sm btn-default" href="#" role="button"><span
+                                        class="glyphicon glyphicon-plus" title="Add to Encounter"></span></a>
+                                </#if>
+                            </div>
                         </td>
                     </tr>
                     </#list>
@@ -142,18 +144,28 @@
                             <img src="/img/${combatant.type.id}.png" style="width:32px" title="${combatant.type}"/>
                         </td>
                         <td><#if combatant.initiative &gt; 0>${combatant.initiative}<#else><em>n/a</em></#if></td>
-                        <td>${combatant.description}</td>
+                        <td <#if combatant.hitPoints??>class="participant-description"</#if>>${combatant.description}</td>
                         <td>${combatant.armorClass}</td>
-                        <td><#if combatant.hitPoints??>${combatant.hitPoints}<#else><em>n/a</em></#if></td>
-                        <td>
+                        <#if combatant.hitPoints?? >
+                        <td class="participant-hp">${combatant.hitPoints}</td>
+                        <#else>
+                        <td><em>n/a</em></td>
+                        </#if>
+                        <td data-conditions="<#list combatant.conditions as c>${c.name()} </#list>">
                             <#list combatant.conditions as condition>
-                                <span class="label label-info"><span class="glyphicon glyphicon-alert"></span> ${condition}</span>
+                                <span class="label label-info"><span class="glyphicon glyphicon-alert"></span> ${condition.label}</span>
+                            <#else>
+                                &nbsp;
                             </#list>
                         </td>
-                        <td class="pull-right">
-                            <a class="btn btn-sm btn-primary" href="#" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-                            <a class="remove-button btn btn-sm btn-warning" href="#" role="button"><span class="glyphicon glyphicon-remove"></span>
-                                Remove</a>
+                        <td>
+                            <div class="pull-right">
+                                <#if combatant.hitPoints?? >
+                                <a class="adjust-hp-button btn btn-sm btn-default" href="#" role="button"><img src="/img/heart-beats.png" style="width: 24px;" title="Adjust HP"></a>
+                                </#if>
+                                <a class="conditions-button btn btn-sm btn-default" href="#" role="button"><img src="/img/heart-inside.png" style="width: 24px;" title="Conditions"></a>
+                                <a class="remove-button btn btn-sm btn-warning" href="#" role="button"><span class="glyphicon glyphicon-remove" title="Remove from Encounter"></span></a>
+                            </div>
                         </td>
                     </tr>
                     </#list>
@@ -170,6 +182,34 @@
 <#include "encounter_add.ftl" />
 <#include "encounter_remove.ftl" />
 <#include "encounter_initiative.ftl" />
+<#include "encounter_hitpoints.ftl" />
+
+
+<div id="conditions-dialog" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><img src="/img/encounter.png" style="width: 32px;"/> Conditions</h4>
+            </div>
+            <div class="modal-body">
+
+                <form>
+                    <#list conditions as condition>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="conditions" value="${condition.name()}"> ${condition.label}</label>
+                    </div>
+                    </#list>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Apply</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

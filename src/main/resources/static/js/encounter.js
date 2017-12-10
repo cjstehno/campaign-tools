@@ -107,3 +107,151 @@ var d20 = function (times, adjustment) {
 
     return value;
 };
+
+$('td.participant-hp').on('dblclick', function (evt) {
+    var elt = $(evt.target);
+    var participantId = $(evt.target).closest('tr').attr('data-id');
+    var value = elt.text();
+
+    elt.replaceWith('<td class="participant-hp"><input type="number" style="width:3em" value="' + value + '"/></td>');
+
+    var newElt = $('td.participant-hp input');
+
+    var savingFx = function () {
+        var encounterId = $('h1[data-id]').attr('data-id');
+
+        $.ajax({
+            url: '/encounter/' + encounterId + '/' + participantId + '/hp',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({hp: parseInt(newElt.val())}),
+            success: function (result) {
+                location = '/encounter/' + encounterId;
+            }
+        });
+    };
+
+    newElt.on('keypress', function (e) {
+        if (e.keyCode == 13) {
+            savingFx();
+        }
+    });
+    newElt.on('blur', function (e) {
+        savingFx();
+    });
+});
+
+$('td.participant-description').on('dblclick', function (evt) {
+    var elt = $(evt.target);
+    var participantId = $(evt.target).closest('tr').attr('data-id');
+    var value = elt.text();
+
+    elt.replaceWith('<td class="participant-description"><input type="text" style="width:10em" value="' + value + '"/></td>');
+
+    var newElt = $('td.participant-description input');
+
+    var savingFx = function () {
+        var encounterId = $('h1[data-id]').attr('data-id');
+
+        $.ajax({
+            url: '/encounter/' + encounterId + '/' + participantId + '/description',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({description: newElt.val()}),
+            success: function (result) {
+                location = '/encounter/' + encounterId;
+            }
+        });
+    };
+
+    newElt.on('keypress', function (e) {
+        if (e.keyCode == 13) {
+            savingFx();
+        }
+    });
+    newElt.on('blur', function (e) {
+        savingFx();
+    });
+});
+
+$('a.adjust-hp-button').on('click', function (evt) {
+    var elt = $(evt.target);
+    var participantId = elt.closest('tr').attr('data-id');
+    var currentHp = elt.closest('tr').find('td.participant-hp').text();
+
+    console.log("current hp: " + currentHp);
+
+    var dialog = $('#hp-adjust-dialog');
+    dialog.attr('data-id', participantId);
+    $('input[name=current]', dialog).val(currentHp);
+    dialog.modal();
+});
+
+$('#hp-adjust-dialog button.btn-primary').on('click', function (evt) {
+    var encounterId = $('h1[data-id]').attr('data-id');
+
+    var dialog = $('#hp-adjust-dialog');
+    var participantId = dialog.attr('data-id');
+    var hpCurrent = parseInt(dialog.find('form input[name=current]').val());
+    var hpDecrease = parseInt(dialog.find('form input[name=reduce]').val());
+    var hpIncrease = parseInt(dialog.find('form input[name=increase]').val());
+
+    $.ajax({
+        url: '/encounter/' + encounterId + '/' + participantId + '/hp',
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify({hp: hpCurrent - hpDecrease + hpIncrease}),
+        success: function (result) {
+            location = '/encounter/' + encounterId;
+        }
+    });
+});
+
+$('a.conditions-button').on('click', function (evt) {
+    var elt = $(evt.target);
+    var participantId = elt.closest('tr').attr('data-id');
+
+    var dialog = $('#conditions-dialog');
+    dialog.attr('data-id', participantId);
+
+    $('input[name=conditions]', dialog).prop('checked', false);
+
+    var conditions = elt.closest('tr').find('td[data-conditions]').attr('data-conditions');
+    if (conditions) {
+        var items = conditions.trim().split(' ');
+        for (var i = 0; i < items.length; i++) {
+            $('input[value=' + items[i] + ']', dialog).prop('checked', true);
+        }
+    }
+
+    dialog.modal();
+});
+
+$('#conditions-dialog button.btn-primary').on('click', function (evt) {
+    var encounterId = $('h1[data-id]').attr('data-id');
+
+    var dialog = $('#conditions-dialog');
+    var participantId = dialog.attr('data-id');
+    // var conditions = $('input[name=conditions]:checked', dialog).val();
+
+    var conditions = $('input:checkbox:checked').map(function() {
+        return this.value;
+    }).get();
+
+    console.log('conditions: ' + conditions);
+    console.log('json: ' + JSON.stringify({conditions: conditions}))
+
+    $.ajax({
+        url: '/encounter/' + encounterId + '/' + participantId + '/conditions',
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify({conditions: conditions}),
+        success: function (result) {
+            location = '/encounter/' + encounterId;
+        }
+    });
+});

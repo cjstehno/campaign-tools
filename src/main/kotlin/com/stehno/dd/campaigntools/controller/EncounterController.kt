@@ -1,5 +1,6 @@
 package com.stehno.dd.campaigntools.controller
 
+import com.stehno.dd.campaigntools.model.Condition
 import com.stehno.dd.campaigntools.model.MonsterEncounterParticipant
 import com.stehno.dd.campaigntools.service.EncounterService
 import com.stehno.dd.campaigntools.service.MonsterService
@@ -45,6 +46,7 @@ class EncounterController {
         mav.addObject("party", partyService.retrieveAll())
         mav.addObject("encounter", encounterService.retrieveEncounter(encounterId))
         mav.addObject("monsters", monsterService.retrieveMonsterList())
+        mav.addObject("conditions", Condition.values())
 
         return mav
     }
@@ -71,6 +73,36 @@ class EncounterController {
         log.info("Adding {} to the encounter", info)
 
         encounterService.addPartyParticipant(encounterId, partyService.retrieveMember(info.memberId), info.initiative)
+
+        return ResponseEntity.ok(Unit)
+    }
+
+    @PostMapping(path = ["/encounter/{encounterId}/{participantId}/hp"], consumes = [APPLICATION_JSON_VALUE])
+    fun adjustHp(@PathVariable("encounterId") encounterId: Long,
+                 @PathVariable("participantId") participantId: Long,
+                 @RequestBody payload: Map<String, Int>): ResponseEntity<Unit> {
+
+        encounterService.adjustHp(encounterId, participantId, payload["hp"])
+
+        return ResponseEntity.ok(Unit)
+    }
+
+    @PostMapping(path = ["/encounter/{encounterId}/{participantId}/description"], consumes = [APPLICATION_JSON_VALUE])
+    fun editDescription(@PathVariable("encounterId") encounterId: Long,
+                        @PathVariable("participantId") participantId: Long,
+                        @RequestBody payload: Map<String, String>): ResponseEntity<Unit> {
+
+        encounterService.updateDescription(encounterId, participantId, payload["description"])
+
+        return ResponseEntity.ok(Unit)
+    }
+
+    @PostMapping(path = ["/encounter/{encounterId}/{participantId}/conditions"], consumes = [APPLICATION_JSON_VALUE])
+    fun editConditions(@PathVariable("encounterId") encounterId: Long,
+                        @PathVariable("participantId") participantId: Long,
+                        @RequestBody payload: Map<String, Array<String>>): ResponseEntity<Unit> {
+
+        encounterService.updateConditions(encounterId, participantId, payload["conditions"])
 
         return ResponseEntity.ok(Unit)
     }
