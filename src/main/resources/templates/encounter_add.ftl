@@ -13,7 +13,6 @@
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#monster-new-panel" role="tab" data-toggle="tab">New Monster</a></li>
                         <li role="presentation"><a href="#monster-existing-panel" role="tab" data-toggle="tab">Existing Monster</a></li>
-                        <li role="presentation"><a href="#party-add-panel" role="tab" data-toggle="tab">Party Member</a></li>
                     </ul>
 
                     <!-- Tab panes -->
@@ -67,24 +66,6 @@
                                 <div class="form-group">
                                     <label>Hit Points</label>
                                     <input type="number" class="form-control" name="hp" placeholder="Hit Points">
-                                </div>
-                            </form>
-                        </div>
-
-                        <div role="tabpanel" class="tab-pane" id="party-add-panel">
-                            <form>
-                                <input type="hidden" name="type" value="PARTY_MEMBER"/>
-                                <div class="form-group">
-                                    <label>Description</label>
-                                    <select name="member" class="form-control">
-                                        <#list party as member>
-                                            <option value="${member.id}">${member.characterName} (${member.playerName})</option>
-                                        </#list>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Initiative</label>
-                                    <input type="number" class="form-control" name="initiative" placeholder="Initiative">
                                 </div>
                             </form>
                         </div>

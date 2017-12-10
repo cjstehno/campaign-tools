@@ -1,9 +1,10 @@
 package com.stehno.dd.campaigntools.service
 
+import com.stehno.dd.campaigntools.model.Condition.PRONE
 import com.stehno.dd.campaigntools.model.Encounter
-import com.stehno.dd.campaigntools.model.EncounterParticipant
-import com.stehno.dd.campaigntools.model.ParticipantType.*
+import com.stehno.dd.campaigntools.model.MonsterEncounterParticipant
 import com.stehno.dd.campaigntools.model.PartyMember
+import com.stehno.dd.campaigntools.model.PartyMemberEncounterParticipant
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -12,9 +13,9 @@ class EncounterService {
 
     private val encounters = mutableMapOf<Long, Encounter>(
         Pair(100, Encounter(100, "Old Roadhouse", TreeSet(setOf(
-            EncounterParticipant(100, true, MONSTER, 18, "Bugbear", 10, 14, setOf(), ""),
-            EncounterParticipant(200, false, PARTY_MEMBER, 17, "Braak", 12, null, setOf("prone"), ""),
-            EncounterParticipant(300, false, DEAD, 0, "Bugbear", 10, 0, setOf(), "")
+            MonsterEncounterParticipant(100, 18, "Bugbear", 10, 14, setOf(), false),
+            MonsterEncounterParticipant(200, 15, "Bugbear", 10, 12, setOf(), false),
+            MonsterEncounterParticipant(300, 8, "Bugbear", 10, 7, setOf(PRONE), false)
         ))))
     )
 
@@ -38,22 +39,20 @@ class EncounterService {
         }
     }
 
-    fun addParticipant(encounterId: Long, participant: EncounterParticipant) {
+    fun addMonsterParticipant(encounterId: Long, participant: MonsterEncounterParticipant) {
         val encounter: Encounter? = encounters[encounterId]
         if (encounter != null) {
             val nextId = encounter.participants.maxBy { it.id }?.id ?: 1
 
             val updated = encounter.participants.toMutableSet()
-            updated.add(EncounterParticipant(
+            updated.add(MonsterEncounterParticipant(
                 nextId,
-                participant.active,
-                participant.type,
                 participant.initiative,
                 participant.description,
                 participant.armorClass,
                 participant.hitPoints,
                 participant.conditions,
-                participant.notes
+                participant.active
             ))
 
             encounters[encounterId] = Encounter(
@@ -65,23 +64,13 @@ class EncounterService {
         }
     }
 
-    fun addParticipantFromParty(encounterId: Long, partyMember: PartyMember, initiative: Int) {
+    fun addPartyParticipant(encounterId: Long, partyMember: PartyMember, initiative: Int) {
         val encounter: Encounter? = encounters[encounterId]
         if (encounter != null) {
             val nextId = encounter.participants.maxBy { it.id }?.id ?: 1
 
             val updated = encounter.participants.toMutableSet()
-            updated.add(EncounterParticipant(
-                nextId,
-                false,
-                PARTY_MEMBER,
-                initiative,
-                partyMember.getDisplayName(),
-                partyMember.armorClass,
-                0,
-                setOf(),
-                ""
-            ))
+            updated.add(PartyMemberEncounterParticipant(partyMember, nextId, initiative, setOf(), false))
 
             encounters[encounterId] = Encounter(
                 encounter.id,

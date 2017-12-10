@@ -82,7 +82,8 @@
                         <td>${member.perception}</td>
                         <td class="pull-right">
                             <#if encounter.containsPartyMember(member.id) >
-                                -
+                                <a class="add-party-member-button btn btn-sm btn-default disabled" href="#" role="button"><span
+                                    class="glyphicon glyphicon-plus"></span> Add to Encounter</a>
                             <#else>
                                 <a class="add-party-member-button btn btn-sm btn-default" href="#" role="button"><span
                                     class="glyphicon glyphicon-plus"></span> Add to Encounter</a>
@@ -127,7 +128,6 @@
                         <th>AC</th>
                         <th>HP</th>
                         <th>Conditions</th>
-                        <th>Notes</th>
                         <th>&nbsp;</th>
                     </tr>
                     </thead>
@@ -150,7 +150,6 @@
                                 <span class="label label-info"><span class="glyphicon glyphicon-alert"></span> ${condition}</span>
                             </#list>
                         </td>
-                        <td>${combatant.notes}</td>
                         <td class="pull-right">
                             <a class="btn btn-sm btn-primary" href="#" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
                             <a class="remove-button btn btn-sm btn-warning" href="#" role="button"><span class="glyphicon glyphicon-remove"></span>

@@ -1,6 +1,6 @@
 package com.stehno.dd.campaigntools.controller
 
-import com.stehno.dd.campaigntools.model.EncounterParticipant
+import com.stehno.dd.campaigntools.model.MonsterEncounterParticipant
 import com.stehno.dd.campaigntools.service.EncounterService
 import com.stehno.dd.campaigntools.service.MonsterService
 import com.stehno.dd.campaigntools.service.PartyService
@@ -57,10 +57,10 @@ class EncounterController {
     }
 
     @PostMapping(path = ["/encounter/{encounterId}"], consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
-    fun addParticipant(@PathVariable("encounterId") encounterId: Long, @RequestBody participant: EncounterParticipant): ResponseEntity<Unit> {
+    fun addMonsterParticipant(@PathVariable("encounterId") encounterId: Long, @RequestBody participant: MonsterEncounterParticipant): ResponseEntity<Unit> {
         log.info("Adding {} to the encounter", participant.description)
 
-        encounterService.addParticipant(encounterId, participant)
+        encounterService.addMonsterParticipant(encounterId, participant)
 
         return ResponseEntity.ok(Unit)
     }
@@ -70,7 +70,7 @@ class EncounterController {
                        @RequestBody info: AddedPartyMember): ResponseEntity<Unit> {
         log.info("Adding {} to the encounter", info)
 
-        encounterService.addParticipantFromParty(encounterId, partyService.retrieveMember(info.memberId), info.initiative)
+        encounterService.addPartyParticipant(encounterId, partyService.retrieveMember(info.memberId), info.initiative)
 
         return ResponseEntity.ok(Unit)
     }
