@@ -25,8 +25,8 @@
 
     <!-- Bootstrap -->
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/css/common.css" rel="stylesheet" />
-    <link href="/css/encounter.css" rel="stylesheet" />
+    <link href="/css/common.css" rel="stylesheet"/>
+    <link href="/css/encounter.css" rel="stylesheet"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -64,11 +64,12 @@
                         <th>Alignment</th>
                         <th>Armor Class</th>
                         <th>Perception</th>
+                        <th>&nbsp;</th>
                     </tr>
                     </thead>
                     <tbody>
                     <#list party as member>
-                    <tr>
+                    <tr data-id="${member.id}">
                         <td>${member.characterName} (${member.playerName})</td>
                         <td>
                             <#list member.classes as lvl>
@@ -79,6 +80,14 @@
                         <td>${member.alignment}</td>
                         <td>${member.armorClass}</td>
                         <td>${member.perception}</td>
+                        <td class="pull-right">
+                            <#if encounter.containsPartyMember(member.id) >
+                                -
+                            <#else>
+                                <a class="add-party-member-button btn btn-sm btn-default" href="#" role="button"><span
+                                    class="glyphicon glyphicon-plus"></span> Add to Encounter</a>
+                            </#if>
+                        </td>
                     </tr>
                     </#list>
                     </tbody>
@@ -126,7 +135,8 @@
                     <#list encounter.participants as combatant>
                     <tr data-id="${combatant.id}">
                         <td>
-                            <#if combatant.active><span class="glyphicon glyphicon-chevron-right" style="color: green;" title="Active combatant"></span><#else>&nbsp;</#if>
+                            <#if combatant.active><span class="glyphicon glyphicon-chevron-right" style="color: green;"
+                                                        title="Active combatant"></span><#else>&nbsp;</#if>
                         </td>
                         <td>
                             <img src="/img/${combatant.type.id}.png" style="width:32px" title="${combatant.type}"/>
@@ -143,9 +153,8 @@
                         <td>${combatant.notes}</td>
                         <td class="pull-right">
                             <a class="btn btn-sm btn-primary" href="#" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-                            <a class="btn btn-sm btn-danger" href="#" role="button" data-toggle="modal" data-target="#kill-monster"><span
-                                class="glyphicon glyphicon-ban-circle"></span> Kill</a>
-                            <a class="remove-button btn btn-sm btn-warning" href="#" role="button"><span class="glyphicon glyphicon-remove"></span> Remove</a>
+                            <a class="remove-button btn btn-sm btn-warning" href="#" role="button"><span class="glyphicon glyphicon-remove"></span>
+                                Remove</a>
                         </td>
                     </tr>
                     </#list>
@@ -180,7 +189,7 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="monster-new-panel">
                             <form>
-                                <input type="hidden" name="type" value="MONSTER" />
+                                <input type="hidden" name="type" value="MONSTER"/>
                                 <div class="form-group">
                                     <label>Description</label>
                                     <input type="text" class="form-control" name="description" placeholder="Description">
@@ -202,7 +211,7 @@
 
                         <div role="tabpanel" class="tab-pane" id="monster-existing-panel">
                             <form>
-                                <input type="hidden" name="type" value="MONSTER" />
+                                <input type="hidden" name="type" value="MONSTER"/>
                                 <div class="form-group">
                                     <label>Template</label>
                                     <select name="monster-template" class="form-control">
@@ -233,7 +242,7 @@
 
                         <div role="tabpanel" class="tab-pane" id="party-add-panel">
                             <form>
-                                <input type="hidden" name="type" value="PARTY_MEMBER" />
+                                <input type="hidden" name="type" value="PARTY_MEMBER"/>
                                 <div class="form-group">
                                     <label>Description</label>
                                     <select name="member" class="form-control">
@@ -281,21 +290,26 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="kill-monster" class="modal fade" tabindex="-1" role="dialog">
+<div id="initiative-dialog" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><img src="/img/encounter.png" style="width: 32px;"/> Kill Participant?</h4>
+                <h4 class="modal-title"><img src="/img/encounter.png" style="width: 32px;"/> Add Party Member to Encounter</h4>
             </div>
             <div class="modal-body">
 
-                <p>Are you sure you want to <strong>kill</strong> this participant (it will <em>not</em> be removed from the encounter)?</p>
+                <form>
+                    <div class="form-group">
+                        <label>Initiative</label>
+                        <input type="number" class="form-control" name="initiative" placeholder="Initiative">
+                    </div>
+                </form>
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger">Kill</button>
+                <button type="button" class="btn btn-primary">Add</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

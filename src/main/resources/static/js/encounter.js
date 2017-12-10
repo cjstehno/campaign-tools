@@ -84,4 +84,42 @@ $('#add-monster button.btn-primary').on('click', function (evt) {
     }
 });
 
-// Math.round(Math.random() * 100) % 20
+$('a.add-party-member-button').on('click', function (evt) {
+    var memberId = $(evt.target).closest('tr').attr('data-id');
+
+    var dialog = $('#initiative-dialog');
+    dialog.attr('data-id', memberId);
+
+    $('input[name=initiative]', dialog).val(d20());
+
+    dialog.modal();
+});
+
+$('#initiative-dialog button.btn-primary').on('click', function (evt) {
+    var encounterId = $('h1[data-id]').attr('data-id');
+
+    var dialog = $('#initiative-dialog');
+    var memberId = dialog.attr('data-id');
+    var initiative = dialog.find('form input[name=initiative]').val();
+
+    $.ajax({
+        url: '/encounter/' + encounterId + "/party/",
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify({memberId: memberId, initiative: initiative}),
+        success: function (result) {
+            location = '/encounter/' + encounterId;
+        }
+    });
+});
+
+var d20 = function (times, adjustment) {
+    var value = 0;
+
+    for (var i = 0; i < (times | 1); i++) {
+        value += (Math.round(Math.random() * 100) % 20 + (adjustment | 0))
+    }
+
+    return value;
+};
