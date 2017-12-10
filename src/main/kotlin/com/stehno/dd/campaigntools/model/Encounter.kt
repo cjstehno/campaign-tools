@@ -5,7 +5,10 @@ import java.util.*
 data class Encounter(val id: Long,
                      val name: String,
                      val participants: TreeSet<EncounterParticipant>,
-                     val finished: Boolean = false) {
+                     val finished: Boolean,
+                     val round: Int) {
+
+    fun updateParticipants(participants: TreeSet<EncounterParticipant>) = Encounter(id, name, participants, finished, round)
 
     fun containsPartyMember(memberId: Long): Boolean {
         return participants.find { p -> p is PartyMemberEncounterParticipant && p.memberId == memberId } != null

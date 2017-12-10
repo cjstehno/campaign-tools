@@ -9,11 +9,21 @@ import java.util.*
 class EncounterService {
 
     private val encounters = mutableMapOf<Long, Encounter>(
-        Pair(100, Encounter(100, "Old Roadhouse", TreeSet(setOf(
-            MonsterEncounterParticipant(100, 18, "Bugbear", 10, 14, setOf(), false),
-            MonsterEncounterParticipant(200, 15, "Bugbear", 10, 12, setOf(), true),
-            MonsterEncounterParticipant(300, 8, "Bugbear", 10, 7, setOf(PRONE), false)
-        ))))
+        Pair(
+            100,
+            Encounter(
+                100,
+                "Old Roadhouse",
+                TreeSet(setOf(
+                    MonsterEncounterParticipant(100, 18, "Bugbear", 10, 14, setOf(), false),
+                    MonsterEncounterParticipant(200, 15, "Bugbear", 10, 12, setOf(), true),
+                    MonsterEncounterParticipant(300, 8, "Bugbear", 10, 7, setOf(PRONE), false)
+                )
+                ),
+                false,
+                1
+            )
+        )
     )
 
     fun retrieveAllEncounters(): List<Encounter> {
@@ -31,7 +41,8 @@ class EncounterService {
                 encounter.id,
                 encounter.name,
                 TreeSet(encounter.participants.filter { it.id != participantId }),
-                encounter.finished
+                encounter.finished,
+                encounter.round
             )
         }
     }
@@ -52,12 +63,7 @@ class EncounterService {
                 participant.active
             ))
 
-            encounters[encounterId] = Encounter(
-                encounter.id,
-                encounter.name,
-                TreeSet(updated),
-                encounter.finished
-            )
+            encounters[encounterId] = encounter.updateParticipants(TreeSet(updated))
         }
     }
 
@@ -69,12 +75,7 @@ class EncounterService {
             val updated = encounter.participants.toMutableSet()
             updated.add(PartyMemberEncounterParticipant(partyMember, nextId, initiative, setOf(), false))
 
-            encounters[encounterId] = Encounter(
-                encounter.id,
-                encounter.name,
-                TreeSet(updated),
-                encounter.finished
-            )
+            encounters[encounterId] = encounter.updateParticipants(TreeSet(updated))
         }
     }
 
@@ -97,12 +98,7 @@ class EncounterService {
                 )
             })
 
-            encounters[encounterId] = Encounter(
-                encounter.id,
-                encounter.name,
-                participants,
-                encounter.finished
-            )
+            encounters[encounterId] = encounter.updateParticipants(participants)
         }
     }
 
@@ -125,12 +121,7 @@ class EncounterService {
                 )
             })
 
-            encounters[encounterId] = Encounter(
-                encounter.id,
-                encounter.name,
-                participants,
-                encounter.finished
-            )
+            encounters[encounterId] = encounter.updateParticipants(participants)
         }
     }
 
@@ -153,12 +144,7 @@ class EncounterService {
                 )
             })
 
-            encounters[encounterId] = Encounter(
-                encounter.id,
-                encounter.name,
-                participants,
-                encounter.finished
-            )
+            encounters[encounterId] = encounter.updateParticipants(participants)
         }
     }
 }
