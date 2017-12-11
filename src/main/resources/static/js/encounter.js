@@ -237,7 +237,7 @@ $('#conditions-dialog button.btn-primary').on('click', function (evt) {
     var participantId = dialog.attr('data-id');
     // var conditions = $('input[name=conditions]:checked', dialog).val();
 
-    var conditions = $('input:checkbox:checked').map(function() {
+    var conditions = $('input:checkbox:checked').map(function () {
         return this.value;
     }).get();
 
@@ -250,6 +250,42 @@ $('#conditions-dialog button.btn-primary').on('click', function (evt) {
         contentType: 'application/json',
         dataType: 'json',
         data: JSON.stringify({conditions: conditions}),
+        success: function (result) {
+            location = '/encounter/' + encounterId;
+        }
+    });
+});
+
+$('a.start-button').on('click', function (evt) {
+    var encounterId = $('h1[data-id]').attr('data-id');
+
+    $.ajax({
+        url: '/encounter/' + encounterId + '/start',
+        type: 'POST',
+        success: function (result) {
+            location = '/encounter/' + encounterId;
+        }
+    });
+});
+
+$('a.next-button').on('click', function (evt) {
+    var encounterId = $('h1[data-id]').attr('data-id');
+
+    $.ajax({
+        url: '/encounter/' + encounterId + '/next',
+        type: 'POST',
+        success: function (result) {
+            location = '/encounter/' + encounterId;
+        }
+    });
+});
+
+$('a.finish-button').on('click', function (evt) {
+    var encounterId = $('h1[data-id]').attr('data-id');
+
+    $.ajax({
+        url: '/encounter/' + encounterId + '/stop',
+        type: 'POST',
         success: function (result) {
             location = '/encounter/' + encounterId;
         }

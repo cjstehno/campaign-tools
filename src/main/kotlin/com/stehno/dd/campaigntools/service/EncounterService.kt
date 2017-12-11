@@ -15,13 +15,14 @@ class EncounterService {
                 100,
                 "Old Roadhouse",
                 TreeSet(setOf(
-                    MonsterEncounterParticipant(100, 18, "Bugbear", 10, 14, setOf(), false),
-                    MonsterEncounterParticipant(200, 15, "Bugbear", 10, 12, setOf(), true),
-                    MonsterEncounterParticipant(300, 8, "Bugbear", 10, 7, setOf(PRONE), false)
+                    MonsterEncounterParticipant(100, 18, "Bugbear", 10, 14, setOf()),
+                    MonsterEncounterParticipant(200, 15, "Bugbear", 10, 12, setOf()),
+                    MonsterEncounterParticipant(300, 8, "Bugbear", 10, 7, setOf(PRONE))
                 )
                 ),
                 false,
-                1
+                null,
+                null
             )
         )
     )
@@ -37,13 +38,7 @@ class EncounterService {
     fun removeParticipant(encounterId: Long, participantId: Long) {
         val encounter: Encounter? = encounters[encounterId]
         if (encounter != null) {
-            encounters[encounterId] = Encounter(
-                encounter.id,
-                encounter.name,
-                TreeSet(encounter.participants.filter { it.id != participantId }),
-                encounter.finished,
-                encounter.round
-            )
+            encounters[encounterId] = encounter.updateParticipants(TreeSet(encounter.participants.filter { it.id != participantId }))
         }
     }
 
@@ -59,8 +54,7 @@ class EncounterService {
                 participant.description,
                 participant.armorClass,
                 participant.hitPoints,
-                participant.conditions,
-                participant.active
+                participant.conditions
             ))
 
             encounters[encounterId] = encounter.updateParticipants(TreeSet(updated))
@@ -73,7 +67,7 @@ class EncounterService {
             val nextId = encounter.participants.maxBy { it.id }?.id ?: 1
 
             val updated = encounter.participants.toMutableSet()
-            updated.add(PartyMemberEncounterParticipant(partyMember, nextId, initiative, setOf(), false))
+            updated.add(PartyMemberEncounterParticipant(partyMember, nextId, initiative, setOf()))
 
             encounters[encounterId] = encounter.updateParticipants(TreeSet(updated))
         }
@@ -93,8 +87,7 @@ class EncounterService {
                     } else {
                         p.hitPoints
                     },
-                    p.conditions,
-                    p.active
+                    p.conditions
                 )
             })
 
@@ -116,8 +109,7 @@ class EncounterService {
                     },
                     p.armorClass,
                     p.hitPoints,
-                    p.conditions,
-                    p.active
+                    p.conditions
                 )
             })
 
@@ -139,13 +131,53 @@ class EncounterService {
                         TreeSet(conditions.map { c -> Condition.valueOf(c) })
                     } else {
                         p.conditions
-                    },
-                    p.active
+                    }
                 )
             })
 
             encounters[encounterId] = encounter.updateParticipants(participants)
         }
+    }
+
+    fun startEncounter(encounterId: Long) {
+        val encounter: Encounter? = encounters[encounterId]
+        if (encounter != null) {
+            encounters[encounterId] = encounter.start()
+        }
+    }
+
+    fun nextParticipant(encounterId: Long) {
+        val encounter: Encounter? = encounters[encounterId]
+        if (encounter != null) {
+            encounters[encounterId] = encounter.next()
+        }
+    }
+
+    fun stopEncounter(encounterId: Long) {
+        val encounter: Encounter? = encounters[encounterId]
+        if (encounter != null) {
+            encounters[encounterId] = encounter.stop()
+        }
+    }
+
+    fun addEncounter(name: String) {
+        val nextId = when {
+            encounters.isNotEmpty() -> encounters.keys.max()!! + 1
+            else -> 1
+        }
+
+        encounters[nextId] = Encounter(
+            nextId,
+            name,
+            TreeSet(),
+            false,
+            null,
+            null
+        )
+    }
+
+    fun removeEncounter(encounterId: Long) {
+        encounters.remove(encounterId)
     }
 }
 

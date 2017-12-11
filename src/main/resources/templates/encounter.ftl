@@ -43,7 +43,7 @@
 
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12">
-            <h1 data-id="${encounter.id}"><img src="/img/encounter.png" style="width: 64px;"/> Encounter: ${encounter.name}</h1>
+            <h1 data-id="${encounter.id}"><img src="/img/encounter.png" style="width: 64px;"/> Encounter: ${encounter.name}<#if encounter.finished> (Finished)</#if></h1>
         </div>
     </div>
 
@@ -86,7 +86,7 @@
                                     <a class="add-party-member-button btn btn-sm btn-default disabled" href="#" role="button"><span
                                         class="glyphicon glyphicon-plus" title="Add to Encounter"></span></a>
                                 <#else>
-                                    <a class="add-party-member-button btn btn-sm btn-default" href="#" role="button"><span
+                                    <a class="add-party-member-button btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button"><span
                                         class="glyphicon glyphicon-plus" title="Add to Encounter"></span></a>
                                 </#if>
                             </div>
@@ -110,13 +110,21 @@
                 </div>
 
                 <div class="panel-body">
-                    <div class="pull-left"><span class="glyphicon glyphicon-time"></span> Round 6 (36s)</div>
+                    <div class="pull-left">
+                        <span class="glyphicon glyphicon-time"></span>
+                    <#if elapsed.time?? >
+                        Round ${encounter.round} (${elapsed.time})
+                    <#else>
+                        <em>Not started</em>
+                    </#if>
+                    </div>
                     <div class="pull-right">
-                        <a class="btn btn-sm btn-primary" href="#" role="button"><span class="glyphicon glyphicon-play"></span> Next</a>
-                        <a class="btn btn-sm btn-success" href="#" role="button"><span class="glyphicon glyphicon-stop"></span> Finish</a>
 
-                        <a class="btn btn-sm btn-default" href="#" role="button" data-toggle="modal" data-target="#add-monster"><span
-                            class="glyphicon glyphicon-plus"></span> Add</a>
+                        <a class="start-button <#if encounter.finished || encounter.round?? >disabled</#if> btn btn-sm btn-default" href="#" role="button"><span class="glyphicon glyphicon-play"></span> Start</a>
+                        <a class="next-button <#if encounter.finished || !encounter.round?? >disabled</#if> btn btn-sm btn-primary" href="#" role="button"><span class="glyphicon glyphicon-step-forward"></span>Next</a>
+                        <a class="finish-button <#if encounter.finished || !encounter.round?? >disabled</#if> btn btn-sm btn-success" href="#" role="button"><span class="glyphicon glyphicon-stop"></span>Finish</a>
+
+                        <a class="btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button" data-toggle="modal" data-target="#add-monster"><span class="glyphicon glyphicon-plus"></span> Add</a>
                     </div>
                 </div>
 
@@ -137,8 +145,10 @@
                     <#list encounter.participants as combatant>
                     <tr data-id="${combatant.id}">
                         <td>
-                            <#if combatant.active><span class="glyphicon glyphicon-chevron-right" style="color: green;"
-                                                        title="Active combatant"></span><#else>&nbsp;</#if>
+                            <#if encounter.activeId?? && encounter.activeId == combatant.id >
+                                <span class="glyphicon glyphicon-chevron-right" style="color: green;" title="Active combatant"></span>
+                            <#else>&nbsp;
+                            </#if>
                         </td>
                         <td>
                             <img src="/img/${combatant.type.id}.png" style="width:32px" title="${combatant.type}"/>
@@ -161,10 +171,14 @@
                         <td>
                             <div class="pull-right">
                                 <#if combatant.hitPoints?? >
-                                <a class="adjust-hp-button btn btn-sm btn-default" href="#" role="button"><img src="/img/heart-beats.png" style="width: 24px;" title="Adjust HP"></a>
+                                <a class="adjust-hp-button btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button"><img src="/img/heart-beats.png"
+                                                                                                               style="width: 24px;" title="Adjust HP"></a>
                                 </#if>
-                                <a class="conditions-button btn btn-sm btn-default" href="#" role="button"><img src="/img/heart-inside.png" style="width: 24px;" title="Conditions"></a>
-                                <a class="remove-button btn btn-sm btn-warning" href="#" role="button"><span class="glyphicon glyphicon-remove" title="Remove from Encounter"></span></a>
+                                <a class="conditions-button btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button"><img src="/img/heart-inside.png"
+                                                                                                                style="width: 24px;"
+                                                                                                                title="Conditions"></a>
+                                <a class="remove-button btn btn-sm btn-warning <#if encounter.finished>disabled</#if>" href="#" role="button"><span class="glyphicon glyphicon-remove"
+                                                                                                             title="Remove from Encounter"></span></a>
                             </div>
                         </td>
                     </tr>
@@ -184,7 +198,6 @@
 <#include "encounter_initiative.ftl" />
 <#include "encounter_hitpoints.ftl" />
 
-
 <div id="conditions-dialog" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -196,9 +209,9 @@
 
                 <form>
                     <#list conditions as condition>
-                    <div class="checkbox">
-                        <label><input type="checkbox" name="conditions" value="${condition.name()}"> ${condition.label}</label>
-                    </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="conditions" value="${condition.name()}"> ${condition.label}</label>
+                        </div>
                     </#list>
                 </form>
 

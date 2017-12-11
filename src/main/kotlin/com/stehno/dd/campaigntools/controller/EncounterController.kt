@@ -16,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView
 @Controller
 class EncounterController {
 
+    // TODO: some error handling would be nice
+
     companion object {
         private val log = LoggerFactory.getLogger(EncounterController::class.java)
     }
@@ -39,14 +41,33 @@ class EncounterController {
         return mav
     }
 
+    @PostMapping(path = ["/encounter"])
+    fun addEncounter(@RequestBody payload: Map<String, String>): ResponseEntity<Unit> {
+        val name = payload["name"]
+        if (!name.isNullOrEmpty()) {
+            encounterService.addEncounter(name!!)
+        }
+
+        return ResponseEntity.ok(Unit)
+    }
+
+    @DeleteMapping(path=["/encounter/{encounterId}"])
+    fun removeEncounter(@PathVariable("encounterId") encounterId: Long) : ResponseEntity<Unit> {
+        encounterService.removeEncounter(encounterId)
+        return ResponseEntity.ok(Unit)
+    }
+
     @GetMapping(path = ["/encounter/{encounterId}"])
     fun encounter(@PathVariable("encounterId") encounterId: Long): ModelAndView {
         val mav = ModelAndView("encounter")
 
+        val encounter = encounterService.retrieveEncounter(encounterId)
+
         mav.addObject("party", partyService.retrieveAll())
-        mav.addObject("encounter", encounterService.retrieveEncounter(encounterId))
+        mav.addObject("encounter", encounter)
         mav.addObject("monsters", monsterService.retrieveMonsterList())
         mav.addObject("conditions", Condition.values())
+        mav.addObject("elapsed", ElapsedTime(encounter?.round))
 
         return mav
     }
@@ -99,13 +120,56 @@ class EncounterController {
 
     @PostMapping(path = ["/encounter/{encounterId}/{participantId}/conditions"], consumes = [APPLICATION_JSON_VALUE])
     fun editConditions(@PathVariable("encounterId") encounterId: Long,
-                        @PathVariable("participantId") participantId: Long,
-                        @RequestBody payload: Map<String, Array<String>>): ResponseEntity<Unit> {
+                       @PathVariable("participantId") participantId: Long,
+                       @RequestBody payload: Map<String, Array<String>>): ResponseEntity<Unit> {
 
         encounterService.updateConditions(encounterId, participantId, payload["conditions"])
+
+        return ResponseEntity.ok(Unit)
+    }
+
+    @PostMapping(path = ["/encounter/{encounterId}/start"])
+    fun startEncounter(@PathVariable("encounterId") encounterId: Long): ResponseEntity<Unit> {
+        encounterService.startEncounter(encounterId)
+
+        return ResponseEntity.ok(Unit)
+    }
+
+    @PostMapping(path = ["/encounter/{encounterId}/next"])
+    fun nextParticipant(@PathVariable("encounterId") encounterId: Long): ResponseEntity<Unit> {
+        encounterService.nextParticipant(encounterId)
+
+        return ResponseEntity.ok(Unit)
+    }
+
+    @PostMapping(path = ["/encounter/{encounterId}/stop"])
+    fun stopEncounter(@PathVariable("encounterId") encounterId: Long): ResponseEntity<Unit> {
+        encounterService.stopEncounter(encounterId)
 
         return ResponseEntity.ok(Unit)
     }
 }
 
 data class AddedPartyMember(val memberId: Long, val initiative: Int)
+
+data class ElapsedTime(private val round: Int?) {
+
+    val time: String?
+
+    init {
+        if (round == null) {
+            time = null
+        } else {
+            val rawSeconds = (round - 1) * 6
+            var minutes = 0
+            var seconds = rawSeconds
+
+            if (rawSeconds >= 60) {
+                minutes = (rawSeconds / 60)
+                seconds = rawSeconds - (minutes * 60)
+            }
+
+            time = "${minutes}m ${seconds.toString().padStart(2, '0')}s"
+        }
+    }
+}
