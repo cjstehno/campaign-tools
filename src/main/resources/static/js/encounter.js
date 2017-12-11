@@ -34,6 +34,13 @@ $('a.remove-button').on('click', function (evt) {
     dialog.modal();
 });
 
+$('a[href="#add-monster"]').on('click', function (evt) {
+    var dialog = $('#add-monster');
+    $('input[name=initiative]', dialog).val(d20());
+    dialog.modal();
+});
+
+
 $('#add-monster button.btn-primary').on('click', function (evt) {
     var encounterId = $('h1[data-id]').attr('data-id');
 

@@ -18,9 +18,12 @@ class PartyServiceTest extends Specification {
 
     def 'loading party: no existing files'() {
         setup:
-        PartyService service = new PartyService(mapper, folder.root)
+        PartyService service = new PartyService(folder.root, mapper)
 
         expect:
+        new File(folder.root, "party-members.json").exists()
+
+        and:
         service.retrieveAll().isEmpty()
     }
 
@@ -29,7 +32,7 @@ class PartyServiceTest extends Specification {
         def file = new File(folder.root, 'party-members.json')
         file.text = '[{"id":123,"characterName":"Braak","playerName":"Chris","classes":[{"name":"Barbarian","level":8}],"race":"Half-orc","alignment":"Chaotic good","armorClass":16,"perception":10}]'
 
-        PartyService service = new PartyService(mapper, folder.root)
+        PartyService service = new PartyService(folder.root, mapper)
 
         when:
         def members = service.retrieveAll()

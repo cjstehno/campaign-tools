@@ -124,7 +124,7 @@
                         <a class="next-button <#if encounter.finished || !encounter.round?? >disabled</#if> btn btn-sm btn-primary" href="#" role="button"><span class="glyphicon glyphicon-step-forward"></span>Next</a>
                         <a class="finish-button <#if encounter.finished || !encounter.round?? >disabled</#if> btn btn-sm btn-success" href="#" role="button"><span class="glyphicon glyphicon-stop"></span>Finish</a>
 
-                        <a class="btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button" data-toggle="modal" data-target="#add-monster"><span class="glyphicon glyphicon-plus"></span> Add</a>
+                        <a class="btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#add-monster" role="button"><span class="glyphicon glyphicon-plus"></span> Add</a>
                     </div>
                 </div>
 

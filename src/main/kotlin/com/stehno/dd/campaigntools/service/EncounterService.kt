@@ -1,31 +1,29 @@
 package com.stehno.dd.campaigntools.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.stehno.dd.campaigntools.model.*
-import com.stehno.dd.campaigntools.model.Condition.PRONE
+import com.stehno.dd.campaigntools.service.PartyService.Companion.ensurePersistenceFile
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.io.File
 import java.util.*
 
 @Service
-class EncounterService {
+class EncounterService(@Value("\${repository.directory}") private val repositoryDirectory: File,
+                       @Autowired private val objectMapper: ObjectMapper) {
 
-    private val encounters = mutableMapOf<Long, Encounter>(
-        Pair(
-            100,
-            Encounter(
-                100,
-                "Old Roadhouse",
-                TreeSet(setOf(
-                    MonsterEncounterParticipant(100, 18, "Bugbear", 10, 14, setOf()),
-                    MonsterEncounterParticipant(200, 15, "Bugbear", 10, 12, setOf()),
-                    MonsterEncounterParticipant(300, 8, "Bugbear", 10, 7, setOf(PRONE))
-                )
-                ),
-                false,
-                null,
-                null
-            )
-        )
-    )
+    private val persistenceFile: File = ensurePersistenceFile(repositoryDirectory, "encounters.json", "{}")
+    private val encounters: MutableMap<Long, Encounter>
+
+    init {
+        encounters = objectMapper.readValue(persistenceFile)
+    }
+
+    private fun persist() {
+        objectMapper.writeValue(persistenceFile, encounters)
+    }
 
     fun retrieveAllEncounters(): List<Encounter> {
         return encounters.values.toList()
@@ -39,6 +37,7 @@ class EncounterService {
         val encounter: Encounter? = encounters[encounterId]
         if (encounter != null) {
             encounters[encounterId] = encounter.updateParticipants(TreeSet(encounter.participants.filter { it.id != participantId }))
+            persist()
         }
     }
 
@@ -58,6 +57,7 @@ class EncounterService {
             ))
 
             encounters[encounterId] = encounter.updateParticipants(TreeSet(updated))
+            persist()
         }
     }
 
@@ -70,6 +70,7 @@ class EncounterService {
             updated.add(PartyMemberEncounterParticipant(partyMember, nextId, initiative, setOf()))
 
             encounters[encounterId] = encounter.updateParticipants(TreeSet(updated))
+            persist()
         }
     }
 
@@ -92,6 +93,7 @@ class EncounterService {
             })
 
             encounters[encounterId] = encounter.updateParticipants(participants)
+            persist()
         }
     }
 
@@ -114,6 +116,7 @@ class EncounterService {
             })
 
             encounters[encounterId] = encounter.updateParticipants(participants)
+            persist()
         }
     }
 
@@ -136,6 +139,7 @@ class EncounterService {
             })
 
             encounters[encounterId] = encounter.updateParticipants(participants)
+            persist()
         }
     }
 
@@ -143,6 +147,7 @@ class EncounterService {
         val encounter: Encounter? = encounters[encounterId]
         if (encounter != null) {
             encounters[encounterId] = encounter.start()
+            persist()
         }
     }
 
@@ -150,6 +155,7 @@ class EncounterService {
         val encounter: Encounter? = encounters[encounterId]
         if (encounter != null) {
             encounters[encounterId] = encounter.next()
+            persist()
         }
     }
 
@@ -157,6 +163,7 @@ class EncounterService {
         val encounter: Encounter? = encounters[encounterId]
         if (encounter != null) {
             encounters[encounterId] = encounter.stop()
+            persist()
         }
     }
 
@@ -174,10 +181,13 @@ class EncounterService {
             null,
             null
         )
+
+        persist()
     }
 
     fun removeEncounter(encounterId: Long) {
         encounters.remove(encounterId)
+        persist()
     }
 }
 
