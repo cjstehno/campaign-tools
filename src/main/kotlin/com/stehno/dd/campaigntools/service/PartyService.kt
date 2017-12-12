@@ -1,42 +1,101 @@
 package com.stehno.dd.campaigntools.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.stehno.dd.campaigntools.model.PartyMember
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.RowMapper
+import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
-import java.io.File
+import java.sql.ResultSet
 
 @Service
-class PartyService(@Value("\${repository.directory}") private var repositoryDirectory: File,
-                   @Autowired private val objectMapper: ObjectMapper) {
-
-    private val party: List<PartyMember>
-
-    init {
-        val memberFile = ensurePersistenceFile(repositoryDirectory, "party-members.json", "[]")
-        party = objectMapper.readValue(memberFile)
-    }
+class PartyService(@Autowired private val repository: PartyRepository) {
 
     fun retrieveAll(): List<PartyMember> {
-        return party
+        return repository.retrieveAll()
     }
 
     fun retrieveMember(memberId: Long): PartyMember {
-        return party.first { it.id == memberId }
+        return repository.retrieve(memberId)
     }
 
-    // FIXME: move this to common area
-    companion object {
-        fun ensurePersistenceFile(directory: File, filename: String, defaultContent: String): File {
-            val file = File(directory, filename)
-            if (!file.exists()) {
-                file.parentFile.mkdirs()
-                file.createNewFile()
-                file.writeText(defaultContent)
-            }
-            return file
-        }
+    fun addMember(member: PartyMember) {
+        repository.add(member)
     }
+
+    fun removeMember(memberId: Long) {
+        repository.remove(memberId)
+    }
+}
+
+@Repository
+class PartyRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
+
+    companion object {
+        private const val RETRIEVE_ALL_SQL = "SELECT id,character_name,player_name,class_level,race,alignment,armor_class,perception FROM party_member"
+        private const val RETRIEVE_ONE_SUFFIX = "where id=?"
+        private const val REMOVE_SQL = "DELETE FROM party_member WHERE id=?"
+        private const val INSERT_SQL = "INSERT INTO party_member (character_name,player_name,class_level,race,alignment,armor_class,perception) VALUES (?,?,?,?,?,?,?)"
+    }
+
+    init {
+        // create the table if not existing
+        jdbcTemplate.execute("""
+            CREATE TABLE IF NOT EXISTS party_member (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                character_name VARCHAR(25) NOT NULL,
+                player_name VARCHAR(25) NOT NULL,
+                class_level VARCHAR(40) NOT NULL,
+                race VARCHAR(10) NOT NULL,
+                alignment VARCHAR(20) NOT NULL,
+                armor_class INT NOT NULL,
+                perception INT NOT NULL
+            )
+        """)
+    }
+
+    fun add(member: PartyMember) {
+        jdbcTemplate.update(
+            INSERT_SQL,
+            member.characterName,
+            member.playerName,
+            member.classLevel,
+            member.race,
+            member.alignment,
+            member.armorClass,
+            member.perception
+        )
+    }
+
+    fun remove(memberId: Long) {
+        jdbcTemplate.update(REMOVE_SQL, memberId)
+    }
+
+    fun retrieveAll(): List<PartyMember> {
+        return jdbcTemplate.query(RETRIEVE_ALL_SQL, PartyMemberRowMapper.INSTANCE)
+    }
+
+    fun retrieve(memberId: Long): PartyMember {
+        return jdbcTemplate.queryForObject("$RETRIEVE_ALL_SQL $RETRIEVE_ONE_SUFFIX", PartyMemberRowMapper.INSTANCE, memberId)
+    }
+}
+
+@Component
+class PartyMemberRowMapper : RowMapper<PartyMember> {
+
+    companion object {
+        val INSTANCE = PartyMemberRowMapper()
+    }
+
+    override fun mapRow(rs: ResultSet?, rowNum: Int): PartyMember = PartyMember(
+        rs!!.getLong("id"),
+        rs.getString("character_name"),
+        rs.getString("player_name"),
+        rs.getString("class_level"),
+        rs.getString("race"),
+        rs.getString("alignment"),
+        rs.getInt("armor_class"),
+        rs.getInt("perception")
+    )
 }

@@ -1,18 +1,16 @@
 package com.stehno.dd.campaigntools.model
 
 
-data class PartyMember(val id: Long,
+data class PartyMember(val id: Long?,
                        val characterName: String,
                        val playerName: String,
-                       val classes: List<ClassLevel>,
+                       val classLevel: String,
                        val race: String,
                        val alignment: String,
                        val armorClass: Int,
                        val perception: Int) {
 
-    fun getDisplayName(): String {
-        return "$characterName ($playerName)"
-    }
+    val displayName: String
+        get() = "$characterName ($playerName)"
 }
 
-data class ClassLevel(val name: String, val level: Int)

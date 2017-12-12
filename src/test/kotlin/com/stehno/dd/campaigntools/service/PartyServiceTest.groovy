@@ -1,8 +1,6 @@
 package com.stehno.dd.campaigntools.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.stehno.dd.campaigntools.model.ClassLevel
+import com.stehno.dd.campaigntools.TestingDatabase
 import com.stehno.dd.campaigntools.model.PartyMember
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -11,34 +9,41 @@ import spock.lang.Specification
 class PartyServiceTest extends Specification {
 
     @Rule TemporaryFolder folder = new TemporaryFolder()
+    @Rule TestingDatabase database = new TestingDatabase()
 
-    private final ObjectMapper mapper = new ObjectMapper().with {
-        registerModule(new KotlinModule())
-    }
+    private final PartyRepository repository = new PartyRepository(database.template)
+    private final PartyService service = new PartyService(repository)
 
-    def 'loading party: no existing files'() {
-        setup:
-        PartyService service = new PartyService(folder.root, mapper)
-
+    def 'retrieveAll with none'() {
         expect:
-        new File(folder.root, "party-members.json").exists()
-
-        and:
-        service.retrieveAll().isEmpty()
+        service.retrieveAll().empty
     }
 
-    def 'loading party: with existing files'() {
+    def 'add and retrieve and remove'() {
         setup:
-        def file = new File(folder.root, 'party-members.json')
-        file.text = '[{"id":123,"characterName":"Braak","playerName":"Chris","classes":[{"name":"Barbarian","level":8}],"race":"Half-orc","alignment":"Chaotic good","armorClass":16,"perception":10}]'
+        PartyMember expectedMember = new PartyMember(1, 'Rogar', 'Bob', 'Fighter (5)', 'Human', 'Chaotic-good', 12, 8)
 
-        PartyService service = new PartyService(folder.root, mapper)
+        service.addMember(new PartyMember(null, 'Rogar', 'Bob', 'Fighter (5)', 'Human', 'Chaotic-good', 12, 8))
 
         when:
         def members = service.retrieveAll()
 
         then:
         members.size() == 1
-        members[0] == new PartyMember(123, 'Braak', 'Chris', [new ClassLevel('Barbarian', 8)], 'Half-orc', 'Chaotic good', 16, 10)
+
+        and:
+        members[0] == expectedMember
+
+        when:
+        def member = service.retrieveMember(1)
+
+        then:
+        member == expectedMember
+
+        when:
+        service.removeMember(1)
+
+        then:
+        service.retrieveAll().empty
     }
 }

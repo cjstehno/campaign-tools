@@ -94,7 +94,7 @@ enum class Condition {
 
 interface EncounterParticipant : Comparable<EncounterParticipant> {
 
-    val id: Long
+    val id: Long?
     val type: ParticipantType
     val initiative: Int
     val description: String
@@ -110,14 +110,14 @@ interface EncounterParticipant : Comparable<EncounterParticipant> {
 }
 
 data class PartyMemberEncounterParticipant(private val member: PartyMember,
-                                           override val id: Long,
+                                           override val id: Long?,
                                            override val initiative: Int,
                                            override val conditions: Set<Condition>) : EncounterParticipant {
     override val type: ParticipantType
         get() = ParticipantType.PARTY_MEMBER
 
     override val description: String
-        get() = member.getDisplayName()
+        get() = member.displayName
 
     override val armorClass: Int
         get() = member.armorClass
@@ -126,11 +126,11 @@ data class PartyMemberEncounterParticipant(private val member: PartyMember,
         get() = null
 
     val memberId: Long
-        get() = member.id
+        get() = member.id!!
 }
 
 // TODO: this will pull from created monster list
-data class MonsterEncounterParticipant(override val id: Long,
+data class MonsterEncounterParticipant(override val id: Long?,
                                        override val initiative: Int,
                                        override val description: String,
                                        override val armorClass: Int,

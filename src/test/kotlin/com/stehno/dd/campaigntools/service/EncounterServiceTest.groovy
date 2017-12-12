@@ -1,7 +1,8 @@
 package com.stehno.dd.campaigntools.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.stehno.dd.campaigntools.TestingDatabase
+import com.stehno.dd.campaigntools.model.Condition
+import com.stehno.dd.campaigntools.model.MonsterEncounterParticipant
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -9,41 +10,25 @@ import spock.lang.Specification
 class EncounterServiceTest extends Specification {
 
     @Rule TemporaryFolder folder = new TemporaryFolder()
+    @Rule TestingDatabase database = new TestingDatabase()
 
-    private final ObjectMapper mapper = new ObjectMapper().with {
-        registerModule(new KotlinModule())
+    private final EncounterRepository repository = new EncounterRepository(database.template)
+    private final EncounterService service = new EncounterService(repository)
+
+    def 'retrieve all (empty)'() {
+        expect:
+        service.retrieveAllEncounters().empty
     }
 
-    def 'persisting with no files'() {
+    def 'add and retrieve (encounter with no content)'(){
         setup:
-        EncounterService service = new EncounterService(folder.root, mapper)
+        service.addEncounter('Unit Test of Horrors')
+//        service.addMonsterParticipant(1, new MonsterEncounterParticipant(null, 10, "Bugs", 10, 12, [] as Set<Condition>))
 
         when:
-        service.addEncounter('Testing')
+        def encounters = service.retrieveAllEncounters()
 
         then:
-        def file = new File(folder.root, "encounters.json")
-        file.exists()
-    }
-
-    def 'persisting to existing file'(){
-        setup:
-        folder.newFile("encounters.json").text = '{"1":{"id":1,"name":"Testing","participants":[],"finished":false,"round":null,"activeId":null}}'
-
-        EncounterService service = new EncounterService(folder.root, mapper)
-
-        when:
-        service.addEncounter('Tomb of Horrors')
-
-        then:
-        def file = new File(folder.root, "encounters.json")
-        def map = mapper.readValue(file, Map)
-        map.size() == 2
-
-        map["1"].name == 'Testing'
-        map["2"].name == 'Tomb of Horrors'
-
-        and:
-        service.retrieveAllEncounters()[1].name == 'Tomb of Horrors'
+        encounters.size() == 1
     }
 }
