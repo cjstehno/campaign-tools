@@ -81,7 +81,6 @@ class PartyRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
     }
 }
 
-@Component
 class PartyMemberRowMapper : RowMapper<PartyMember> {
 
     companion object {

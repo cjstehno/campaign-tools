@@ -62,7 +62,7 @@ data class Encounter(val id: Long,
     }
 
     fun containsPartyMember(memberId: Long): Boolean {
-        return participants.find { p -> p is PartyMemberEncounterParticipant && p.memberId == memberId } != null
+        return participants.find { p -> p.type == ParticipantType.PARTY_MEMBER && p.refId == memberId } != null
     }
 }
 
@@ -92,15 +92,14 @@ enum class Condition {
     var label: String = name.toLowerCase().capitalize()
 }
 
-interface EncounterParticipant : Comparable<EncounterParticipant> {
-
-    val id: Long?
-    val type: ParticipantType
-    val initiative: Int
-    val description: String
-    val armorClass: Int
-    val hitPoints: Int?
-    val conditions: Set<Condition>
+data class EncounterParticipant(val id: Long?,
+                                val refId: Long?,
+                                val type: ParticipantType,
+                                val initiative: Int,
+                                val description: String,
+                                val armorClass: Int,
+                                val hitPoints: Int?,
+                                val conditions: Set<Condition>) : Comparable<EncounterParticipant> {
 
     override fun compareTo(other: EncounterParticipant): Int = when {
         other.initiative > initiative -> 1
@@ -108,37 +107,3 @@ interface EncounterParticipant : Comparable<EncounterParticipant> {
         else -> 0
     }
 }
-
-data class PartyMemberEncounterParticipant(private val member: PartyMember,
-                                           override val id: Long?,
-                                           override val initiative: Int,
-                                           override val conditions: Set<Condition>) : EncounterParticipant {
-    override val type: ParticipantType
-        get() = ParticipantType.PARTY_MEMBER
-
-    override val description: String
-        get() = member.displayName
-
-    override val armorClass: Int
-        get() = member.armorClass
-
-    override val hitPoints: Int?
-        get() = null
-
-    val memberId: Long
-        get() = member.id!!
-}
-
-// TODO: this will pull from created monster list
-data class MonsterEncounterParticipant(override val id: Long?,
-                                       override val initiative: Int,
-                                       override val description: String,
-                                       override val armorClass: Int,
-                                       override val hitPoints: Int?,
-                                       override val conditions: Set<Condition>) : EncounterParticipant {
-    override val type: ParticipantType
-        get() = ParticipantType.MONSTER
-
-}
-
-// TODO: another type will be used for the ad-hoc particpants (not party and not listed monsters)

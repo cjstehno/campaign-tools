@@ -1,7 +1,7 @@
 package com.stehno.dd.campaigntools.controller
 
 import com.stehno.dd.campaigntools.model.Condition
-import com.stehno.dd.campaigntools.model.MonsterEncounterParticipant
+import com.stehno.dd.campaigntools.model.EncounterParticipant
 import com.stehno.dd.campaigntools.service.EncounterService
 import com.stehno.dd.campaigntools.service.MonsterService
 import com.stehno.dd.campaigntools.service.PartyService
@@ -51,8 +51,8 @@ class EncounterController {
         return ResponseEntity.ok(Unit)
     }
 
-    @DeleteMapping(path=["/encounter/{encounterId}"])
-    fun removeEncounter(@PathVariable("encounterId") encounterId: Long) : ResponseEntity<Unit> {
+    @DeleteMapping(path = ["/encounter/{encounterId}"])
+    fun removeEncounter(@PathVariable("encounterId") encounterId: Long): ResponseEntity<Unit> {
         encounterService.removeEncounter(encounterId)
         return ResponseEntity.ok(Unit)
     }
@@ -80,10 +80,10 @@ class EncounterController {
     }
 
     @PostMapping(path = ["/encounter/{encounterId}"], consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
-    fun addMonsterParticipant(@PathVariable("encounterId") encounterId: Long, @RequestBody participant: MonsterEncounterParticipant): ResponseEntity<Unit> {
+    fun addMonsterParticipant(@PathVariable("encounterId") encounterId: Long, @RequestBody participant: EncounterParticipant): ResponseEntity<Unit> {
         log.info("Adding {} to the encounter", participant.description)
 
-        encounterService.addMonsterParticipant(encounterId, participant)
+//  FIXME:       encounterService.addMonsterParticipant(encounterId, description: String, initiative: Int, armorClass: Int, hitPoints: Int)
 
         return ResponseEntity.ok(Unit)
     }
