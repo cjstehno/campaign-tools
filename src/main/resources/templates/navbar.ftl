@@ -32,6 +32,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
                     <ul class="dropdown-menu">
+                        <li><a href="/dice">Dice</a></li>
                         <li><a href="/party">Party</a></li>
                         <li><a href="/encounter">Encounters</a></li>
                     </ul>

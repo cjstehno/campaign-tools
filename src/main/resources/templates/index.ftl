@@ -45,7 +45,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" style="margin-bottom: 6px">
         <div class="col-md-1 col-sm-1">
             <a href="/party"><img class="img-circle" src="/img/medieval-pavilion.png" style="width: 64px"/></a>
         </div>
@@ -55,13 +55,25 @@
             </div>
         </div>
     </div>
-    <div class="row">
+
+    <div class="row" style="margin-bottom: 6px">
         <div class="col-md-1 col-sm-1">
             <a href="/encounter"><img class="img-circle" src="/img/encounter.png" style="width: 64px"/></a>
         </div>
         <div class="col-md-11 col-sm-11">
             <div style="margin-top: 1em;font-size: larger">
             <a href="/encounter">Encounters</a> - create and manage encounters for the campaign.
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 6px">
+        <div class="col-md-1 col-sm-1">
+            <a href="/dice"><img class="img-circle" src="/img/rolling-dices.png" style="width: 64px"/></a>
+        </div>
+        <div class="col-md-11 col-sm-11">
+            <div style="margin-top: 1em;font-size: larger">
+                <a href="/dice">Dice</a> - roll some dice.
             </div>
         </div>
     </div>
