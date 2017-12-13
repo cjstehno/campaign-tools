@@ -15,17 +15,32 @@
  */
 package com.stehno.dd.campaigntools
 
+import groovy.util.logging.Slf4j
+import org.flywaydb.core.Flyway
 import org.h2.jdbcx.JdbcConnectionPool
 import org.junit.rules.ExternalResource
 import org.springframework.jdbc.core.JdbcTemplate
 
+@Slf4j
 class TestingDatabase extends ExternalResource {
 
     private final JdbcConnectionPool pool = JdbcConnectionPool.create("jdbc:h2:mem:test", "sa", "sa")
     final JdbcTemplate template = new JdbcTemplate(pool)
+    final Flyway flyway = new Flyway(dataSource: pool)
+
+    @Override
+    protected void before() throws Throwable {
+        rebuildDatabase()
+    }
 
     @Override
     protected void after() {
         pool.dispose()
+    }
+
+    private void rebuildDatabase() {
+        log.debug 'Rebuilding the database...'
+        flyway.clean()
+        flyway.migrate()
     }
 }

@@ -93,33 +93,11 @@ class EncounterRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
         private const val UPDATE_HP_SQL = "UPDATE encounter_participants SET hit_points=? WHERE encounter_id=? AND id=?"
         private const val UPDATE_DESC_SQL = "UPDATE encounter_participants SET description=? WHERE encounter_id=? AND id=?"
         private const val UPDATE_CONDITIONS_SQL = "UPDATE encounter_participants SET conditions=? WHERE encounter_id=? AND id=?"
-    }
-
-    init {
-        // create the table if not existing
-        jdbcTemplate.execute("""
-            CREATE TABLE IF NOT EXISTS encounter (
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                name VARCHAR(30) NOT NULL ,
-                finished BOOLEAN NOT NULL DEFAULT FALSE ,
-                round INT DEFAULT NULL,
-                active_id BIGINT DEFAULT NULL
-            )
-        """)
-
-        jdbcTemplate.execute("""
-            CREATE TABLE IF NOT EXISTS encounter_participants (
-                encounter_id BIGINT REFERENCES encounter (id),
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                ref_id BIGINT,
-                type VARCHAR(20) NOT NULL,
-                initiative INT NOT NULL,
-                description VARCHAR(30) NOT NULL,
-                armor_class INT NOT NULL ,
-                hit_points INT DEFAULT NULL,
-                conditions ARRAY NOT NULL
-            )
-        """)
+        private const val START_ENCOUNTER_SQL = "UPDATE encounter SET round=1, active_id=(SELECT id FROM encounter_participants WHERE encounter_id=? ORDER BY initiative DESC LIMIT 1) WHERE id=?"
+        private const val SELECT_ENCOUNTER_IDS_SQL = "SELECT id FROM encounter_participants WHERE encounter_id=? ORDER BY initiative DESC"
+        private const val SELECT_ACTIVE_ID_SQL = "SELECT active_id FROM encounter WHERE id=?"
+        private const val NEXT_ENCOUNTER_SQL = "UPDATE encounter SET round=round+?, active_id=? WHERE id=?"
+        private const val STOP_ENCOUNTER_SQL = "UPDATE encounter SET finished=TRUE, active_id=NULL WHERE id=?"
     }
 
     fun retrieveAll(): List<Encounter> {
@@ -175,23 +153,14 @@ class EncounterRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
 
     fun start(encounterId: Long) {
         jdbcTemplate.update(
-            "UPDATE encounter SET round=1, active_id=(SELECT id FROM encounter_participants WHERE encounter_id=? ORDER BY initiative DESC LIMIT 1) WHERE id=?",
+            START_ENCOUNTER_SQL,
             encounterId, encounterId
         )
     }
 
     fun next(encounterId: Long) {
-        val participants = jdbcTemplate.query(
-            "SELECT id FROM encounter_participants WHERE encounter_id=? ORDER BY initiative DESC",
-            SingleColumnRowMapper<Long>(Long::class.java),
-            encounterId
-        )
-
-        val currentActiveId = jdbcTemplate.queryForObject(
-            "SELECT active_id FROM encounter WHERE id=?",
-            SingleColumnRowMapper<Long>(Long::class.java),
-            encounterId
-        )
+        val participants = jdbcTemplate.query(SELECT_ENCOUNTER_IDS_SQL, SingleColumnRowMapper<Long>(Long::class.java), encounterId)
+        val currentActiveId = jdbcTemplate.queryForObject(SELECT_ACTIVE_ID_SQL, SingleColumnRowMapper<Long>(Long::class.java), encounterId)
 
         var index = participants.indexOfFirst { it == currentActiveId } + 1
         var roundAdjustment = 0
@@ -201,15 +170,12 @@ class EncounterRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
         }
         val activeId = participants[index]
 
-        jdbcTemplate.update(
-            "UPDATE encounter SET round=round+?, active_id=? WHERE id=?",
-            roundAdjustment, activeId, encounterId
-        )
+        jdbcTemplate.update(NEXT_ENCOUNTER_SQL, roundAdjustment, activeId, encounterId)
     }
 
     fun stop(encounterId: Long) {
         jdbcTemplate.update(
-            "UPDATE encounter SET finished=TRUE, active_id=NULL WHERE id=?",
+            STOP_ENCOUNTER_SQL,
             encounterId
         )
     }

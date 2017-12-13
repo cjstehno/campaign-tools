@@ -39,22 +39,6 @@ class PartyRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
         private const val INSERT_SQL = "INSERT INTO party_member (character_name,player_name,class_level,race,alignment,armor_class,perception) VALUES (?,?,?,?,?,?,?)"
     }
 
-    init {
-        // create the table if not existing
-        jdbcTemplate.execute("""
-            CREATE TABLE IF NOT EXISTS party_member (
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                character_name VARCHAR(25) NOT NULL,
-                player_name VARCHAR(25) NOT NULL,
-                class_level VARCHAR(40) NOT NULL,
-                race VARCHAR(10) NOT NULL,
-                alignment VARCHAR(20) NOT NULL,
-                armor_class INT NOT NULL,
-                perception INT NOT NULL
-            )
-        """)
-    }
-
     fun add(member: PartyMember) {
         jdbcTemplate.update(
             INSERT_SQL,

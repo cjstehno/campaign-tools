@@ -63,9 +63,6 @@
                                     <label>Template</label>
                                     <select name="monster-template" class="form-control">
                                         <option>Select Monster</option>
-                                        <#list monsters as monster>
-                                            <option value="${monster.url}">${monster.name}</option>
-                                        </#list>
                                     </select>
                                 </div>
                                 <div class="form-group">
