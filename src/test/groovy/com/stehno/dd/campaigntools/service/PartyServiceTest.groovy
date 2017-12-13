@@ -17,6 +17,7 @@ package com.stehno.dd.campaigntools.service
 
 import com.stehno.dd.campaigntools.TestingDatabase
 import com.stehno.dd.campaigntools.model.PartyMember
+import com.stehno.dd.campaigntools.repository.PartyRepository
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
