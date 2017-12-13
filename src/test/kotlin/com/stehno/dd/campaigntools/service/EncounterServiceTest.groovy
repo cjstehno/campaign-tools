@@ -16,8 +16,7 @@
 package com.stehno.dd.campaigntools.service
 
 import com.stehno.dd.campaigntools.TestingDatabase
-import com.stehno.dd.campaigntools.model.Encounter
-import com.stehno.dd.campaigntools.model.EncounterParticipant
+import com.stehno.dd.campaigntools.model.*
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -35,7 +34,7 @@ class EncounterServiceTest extends Specification {
         service.retrieveAllEncounters().empty
     }
 
-    def 'add and retrieve (encounter with no content)'(){
+    def 'add and retrieve (encounter with no content)'() {
         setup:
         service.addEncounter('Unit Test of Horrors')
 
@@ -49,10 +48,23 @@ class EncounterServiceTest extends Specification {
         encounters[0] == new Encounter(1, 'Unit Test of Horrors', new TreeSet<EncounterParticipant>(), false, null, null)
     }
 
-    def 'add and retrieve (encounter with content)'(){
+    def 'add and retrieve (encounter with content)'() {
         setup:
+        Encounter expectedEncounter = new Encounter(
+            1,
+            'Unit Test of Horrors',
+            [
+                new EncounterParticipant(1, 0, ParticipantType.MONSTER, 18, 'Bug', 17, 123, [] as Set<Condition>),
+                new EncounterParticipant(1, 1, ParticipantType.PARTY_MEMBER, 12, 'Bobor (Chris)', 12, null, [] as TreeSet<Condition>)
+            ] as TreeSet<EncounterParticipant>,
+            false,
+            null,
+            null
+        )
+
         service.addEncounter('Unit Test of Horrors')
         service.addMonsterParticipant(1, "Bug", 18, 17, 123)
+        service.addPartyParticipant(1, new PartyMember(1, 'Bobor', 'Chris', 'Barbarian (7)', 'Half-orc', 'Chaotic-good', 12, 8), 12)
 
         when:
         def encounters = service.retrieveAllEncounters()
@@ -61,6 +73,70 @@ class EncounterServiceTest extends Specification {
         encounters.size() == 1
 
         and:
-        encounters[0] == new Encounter(1, 'Unit Test of Horrors', new TreeSet<EncounterParticipant>(), false, null, null)
+        encounters[0] == expectedEncounter
+
+        when:
+        def encounter = service.retrieveEncounter(1)
+
+        then:
+        encounter == expectedEncounter
+
+        when:
+        service.removeParticipant(1, 1)
+
+        then:
+        service.retrieveEncounter(1).participants.size() == 1
+
+        when:
+        service.removeEncounter(1)
+
+        then:
+        service.retrieveAllEncounters().size() == 0
+    }
+
+    def 'active and round management'() {
+        setup:
+        service.addEncounter('Unit Test of Horrors')
+        service.addMonsterParticipant(1, "Bug", 18, 17, 123)
+        service.addPartyParticipant(1, new PartyMember(1, 'Bobor', 'Chris', 'Barbarian (7)', 'Half-orc', 'Chaotic-good', 12, 8), 12)
+
+        when:
+        def encounter = service.retrieveEncounter(1)
+
+        then:
+        !encounter.finished
+        !encounter.activeId
+
+        when:
+        service.startEncounter(1)
+        encounter = service.retrieveEncounter(1)
+
+        then:
+        !encounter.finished
+        encounter.activeId == 1
+
+        when:
+        service.nextParticipant(1)
+        encounter = service.retrieveEncounter(1)
+
+        then:
+        !encounter.finished
+        encounter.activeId == 2
+
+        when:
+        service.nextParticipant(1)
+        encounter = service.retrieveEncounter(1)
+
+        then:
+        !encounter.finished
+        encounter.activeId == 1
+
+        when:
+        service.stopEncounter(1)
+        encounter = service.retrieveEncounter(1)
+
+        then:
+        encounter.finished
+        !encounter.activeId
     }
 }

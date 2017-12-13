@@ -113,7 +113,10 @@ class EncounterController {
                         @PathVariable("participantId") participantId: Long,
                         @RequestBody payload: Map<String, String>): ResponseEntity<Unit> {
 
-        encounterService.updateDescription(encounterId, participantId, payload["description"])
+        val description: String? = payload["description"]
+        if (!description.isNullOrEmpty()) {
+            encounterService.updateDescription(encounterId, participantId, description!!)
+        }
 
         return ResponseEntity.ok(Unit)
     }
@@ -123,7 +126,10 @@ class EncounterController {
                        @PathVariable("participantId") participantId: Long,
                        @RequestBody payload: Map<String, Array<String>>): ResponseEntity<Unit> {
 
-        encounterService.updateConditions(encounterId, participantId, payload["conditions"])
+        val conditions = payload["conditions"]
+        if (conditions != null) {
+            encounterService.updateConditions(encounterId, participantId, conditions)
+        }
 
         return ResponseEntity.ok(Unit)
     }

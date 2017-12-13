@@ -11,56 +11,6 @@ data class Encounter(val id: Long,
 
     fun updateParticipants(participants: TreeSet<EncounterParticipant>) = Encounter(id, name, participants, finished, round, activeId)
 
-    fun start(): Encounter {
-        val first = participants.first()
-
-        return Encounter(
-            id,
-            name,
-            participants,
-            false,
-            1,
-            first.id
-        )
-    }
-
-    fun next(): Encounter {
-        if (finished) {
-            throw IllegalStateException("The encounter is already finished.")
-        } else if (round == null || round == 0) {
-            throw IllegalStateException("The encounter has not been started.")
-        }
-
-        val list = participants.toList()
-        var index = list.indexOfFirst { p -> p.id == activeId } + 1
-        var nextRound = round
-        if (index >= list.size) {
-            index = 0
-            nextRound += 1
-        }
-        val nextParticipant = list[index]
-
-        return Encounter(
-            id,
-            name,
-            participants,
-            false,
-            nextRound,
-            nextParticipant.id
-        )
-    }
-
-    fun stop(): Encounter {
-        return Encounter(
-            id,
-            name,
-            participants,
-            true,
-            round,
-            null
-        )
-    }
-
     fun containsPartyMember(memberId: Long): Boolean {
         return participants.find { p -> p.type == ParticipantType.PARTY_MEMBER && p.refId == memberId } != null
     }
@@ -72,22 +22,9 @@ enum class ParticipantType(val id: String) {
 }
 
 enum class Condition {
-    BLINDED,
-    CHARMED,
-    DEAFENED,
-    FATIGUED,
-    FRIGHTENED,
-    GRAPPLED,
-    INCAPACITATED,
-    INVISIBLE,
-    PARALYSED,
-    PETRIFIED,
-    POISONED,
-    PRONE,
-    RESTRAINED,
-    STUNNED,
-    UNCONSCIOUS,
-    EXHAUSTION;
+    BLINDED, CHARMED, DEAFENED, FATIGUED, FRIGHTENED, GRAPPLED,
+    INCAPACITATED, INVISIBLE, PARALYSED, PETRIFIED, POISONED,
+    PRONE, RESTRAINED, STUNNED, UNCONSCIOUS, EXHAUSTION;
 
     var label: String = name.toLowerCase().capitalize()
 }
