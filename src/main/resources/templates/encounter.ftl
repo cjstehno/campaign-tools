@@ -152,11 +152,13 @@
                         <td><#if combatant.initiative &gt; 0>${combatant.initiative}<#else><em>n/a</em></#if></td>
                         <td <#if combatant.hitPoints??>class="participant-description"</#if>>${combatant.description}</td>
                         <td>${combatant.armorClass}</td>
-                        <#if combatant.hitPoints?? && combatant.hitPoints &gt; 0 >
-                        <td class="participant-hp">${combatant.hitPoints}</td>
+
+                        <#if !combatant.hitPoints?? || (combatant.type.name() == "PARTY_MEMBER" && combatant.hitPoints &lt; 1)>
+                            <td><em>n/a</em></td>
                         <#else>
-                        <td><em>n/a</em></td>
+                            <td class="participant-hp" <#if combatant.hitPoints &lt; 1>style="color:red" </#if>>${combatant.hitPoints}</td>
                         </#if>
+
                         <td data-conditions="<#list combatant.conditions as c>${c.name()} </#list>">
                             <#list combatant.conditions as condition>
                                 <span class="label label-info"><span class="glyphicon glyphicon-alert"></span> ${condition.label}</span>
