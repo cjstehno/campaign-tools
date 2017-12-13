@@ -71,11 +71,7 @@
                     <#list party as member>
                     <tr data-id="${member.id}">
                         <td>${member.characterName} (${member.playerName})</td>
-                        <td>
-                            <#list member.classes as lvl>
-                                ${lvl.name} (${lvl.level})
-                            </#list>
-                        </td>
+                        <td>${member.classLevel}</td>
                         <td>${member.race}</td>
                         <td>${member.alignment}</td>
                         <td>${member.armorClass}</td>

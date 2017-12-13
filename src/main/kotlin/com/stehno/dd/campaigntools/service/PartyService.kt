@@ -23,4 +23,8 @@ class PartyService(@Autowired private val repository: PartyRepository) {
     fun removeMember(memberId: Long) {
         repository.remove(memberId)
     }
+
+    fun updateMember(member: PartyMember) {
+        repository.update(member)
+    }
 }

@@ -41,6 +41,13 @@ class PartyRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
     fun retrieve(memberId: Long): PartyMember {
         return jdbcTemplate.queryForObject("$RETRIEVE_ALL_SQL $RETRIEVE_ONE_SUFFIX", PartyMemberRowMapper.INSTANCE, memberId)
     }
+
+    fun update(member: PartyMember) {
+        jdbcTemplate.update(
+            "UPDATE party_member SET character_name=?,player_name=?,class_level=?,race=?,alignment=?,armor_class=?,perception=? WHERE id=?",
+            member.characterName, member.playerName, member.classLevel, member.race, member.alignment, member.armorClass, member.perception, member.id
+        )
+    }
 }
 
 class PartyMemberRowMapper : RowMapper<PartyMember> {

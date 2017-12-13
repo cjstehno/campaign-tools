@@ -147,7 +147,7 @@ class EncounterParticipantRowMapper : RowMapper<EncounterParticipant> {
 
         @Suppress("UNCHECKED_CAST")
         private fun extractArray(rs: ResultSet, fieldName: String): Set<Condition> {
-            return (rs.getArray(fieldName)?.array as Array<String>).map { Condition.valueOf(it) }.toSet()
+            return (rs.getArray(fieldName)?.array as Array<*>).map { Condition.valueOf(it.toString()) }.toSet()
         }
     }
 
@@ -195,7 +195,10 @@ class EncounterResultSetExtractor : ResultSetExtractor<Encounter> {
             }
         }
 
-        return encounter?.updateParticipants(TreeSet(participants[encounter.id]))
+        return when {
+            participants.isNotEmpty() -> encounter?.updateParticipants(TreeSet(participants[encounter.id]))
+            else -> encounter
+        }
     }
 }
 

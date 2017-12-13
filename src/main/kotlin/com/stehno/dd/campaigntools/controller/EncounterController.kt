@@ -80,7 +80,7 @@ class EncounterController {
     fun addMonsterParticipant(@PathVariable("encounterId") encounterId: Long, @RequestBody participant: EncounterParticipant): ResponseEntity<Unit> {
         log.info("Adding {} to the encounter", participant.description)
 
-//  FIXME:       encounterService.addMonsterParticipant(encounterId, description: String, initiative: Int, armorClass: Int, hitPoints: Int)
+        encounterService.addMonsterParticipant(encounterId, participant.description, participant.initiative, participant.armorClass, participant.hitPoints!!)
 
         return ResponseEntity.ok(Unit)
     }

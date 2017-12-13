@@ -47,6 +47,16 @@
 
     <div class="row">
         <div class="col-md-1 col-sm-1">
+            <a href="/party"><img class="img-circle" src="/img/medieval-pavilion.png" style="width: 64px"/></a>
+        </div>
+        <div class="col-md-11 col-sm-11">
+            <div style="margin-top: 1em;font-size: larger">
+                <a href="/party">Party</a> - manage the campaign party members.
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1 col-sm-1">
             <a href="/encounter"><img class="img-circle" src="/img/encounter.png" style="width: 64px"/></a>
         </div>
         <div class="col-md-11 col-sm-11">
