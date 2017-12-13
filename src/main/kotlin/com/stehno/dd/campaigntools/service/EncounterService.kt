@@ -1,5 +1,6 @@
 package com.stehno.dd.campaigntools.service
 
+import com.stehno.dd.campaigntools.model.DurationTimer
 import com.stehno.dd.campaigntools.model.Encounter
 import com.stehno.dd.campaigntools.model.EncounterParticipant
 import com.stehno.dd.campaigntools.model.ParticipantType.MONSTER
@@ -68,5 +69,13 @@ class EncounterService(@Autowired private val repository: EncounterRepository) {
 
     fun removeEncounter(encounterId: Long) {
         repository.remove(encounterId)
+    }
+
+    fun addTimer(encounterId: Long, durationTimer: DurationTimer){
+        repository.addTimer(encounterId, durationTimer)
+    }
+
+    fun removeTimer(encounterId: Long, timerId: Long) {
+        repository.removeTimer(encounterId, timerId)
     }
 }

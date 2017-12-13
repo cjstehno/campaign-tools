@@ -1,6 +1,7 @@
 package com.stehno.dd.campaigntools.controller
 
 import com.stehno.dd.campaigntools.model.Condition
+import com.stehno.dd.campaigntools.model.DurationTimer
 import com.stehno.dd.campaigntools.model.EncounterParticipant
 import com.stehno.dd.campaigntools.service.EncounterService
 import com.stehno.dd.campaigntools.service.PartyService
@@ -65,6 +66,7 @@ class EncounterController {
         mav.addObject("encounter", encounter)
         mav.addObject("conditions", Condition.values())
         mav.addObject("elapsed", ElapsedTime(encounter?.round))
+        mav.addObject("timeFormatter", TimeFormatter.INSTANCE)
 
         return mav
     }
@@ -151,10 +153,23 @@ class EncounterController {
 
         return ResponseEntity.ok(Unit)
     }
+
+    @PostMapping(path = ["/encounter/{encounterId}/timer"])
+    fun addDurationTimer(@PathVariable("encounterId") encounterId: Long, @RequestBody durationTimer: DurationTimer): ResponseEntity<Unit> {
+        encounterService.addTimer(encounterId, durationTimer)
+        return ResponseEntity.ok(Unit)
+    }
+
+    @DeleteMapping(path = ["/encounter/{encounterId}/timer/{timerId}"])
+    fun removeDurationTimer(@PathVariable("encounterId") encounterId: Long, @PathVariable("timerId") timerId: Long): ResponseEntity<Unit> {
+        encounterService.removeTimer(encounterId, timerId)
+        return ResponseEntity.ok(Unit)
+    }
 }
 
 data class AddedPartyMember(val memberId: Long, val initiative: Int)
 
+// TODO: roll this into the formatter
 data class ElapsedTime(private val round: Int?) {
 
     val time: String?
@@ -175,4 +190,13 @@ data class ElapsedTime(private val round: Int?) {
             time = "${minutes}m ${seconds.toString().padStart(2, '0')}s"
         }
     }
+}
+
+class TimeFormatter {
+
+    companion object {
+        val INSTANCE = TimeFormatter()
+    }
+
+    fun format(rounds: Int): String = ElapsedTime(rounds).time!!
 }

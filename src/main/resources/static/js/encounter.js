@@ -298,3 +298,54 @@ $('a.finish-button').on('click', function (evt) {
         }
     });
 });
+
+
+$('a[href="#add-timer"]').on('click', function (evt) {
+    evt.preventDefault();
+    $('#add-timer-dialog').modal();
+});
+
+$('#add-timer-dialog .btn-primary').on('click', function (evt) {
+    var encounterId = $('h1[data-id]').attr('data-id');
+
+    var form = $('#add-timer-dialog');
+    var description = form.find('input[name=description]').val();
+    var startRound = parseInt(form.find('input[name=startRound]').val());
+    var duration = parseInt(form.find('input[name=duration]').val());
+
+    $.ajax({
+        url: '/encounter/' + encounterId + '/timer',
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify({
+            description: description,
+            startRound: startRound,
+            endRound: startRound + duration
+        }),
+        success: function (result) {
+            location = '/encounter/' + encounterId;
+        }
+    });
+});
+
+$('a[href="#remove-timer"]').on('click', function (evt) {
+    var timerId = $(evt.target).closest('tr').attr('data-id');
+
+    var dialog = $('#remove-timer-dialog');
+    dialog.attr('data-id', timerId);
+    dialog.modal();
+});
+
+$('#remove-timer-dialog button.btn-danger').on('click', function (evt) {
+    var encounterId = $('h1[data-id]').attr('data-id');
+    var timerId = $('#remove-timer-dialog').attr('data-id');
+
+    $.ajax({
+        url: '/encounter/' + encounterId + '/timer/' + timerId,
+        type: 'DELETE',
+        success: function (result) {
+            location = '/encounter/' + encounterId;
+        }
+    });
+});

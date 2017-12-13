@@ -7,9 +7,8 @@ data class Encounter(val id: Long,
                      val participants: TreeSet<EncounterParticipant>,
                      val finished: Boolean,
                      val round: Int?,
-                     val activeId: Long?) {
-
-    fun updateParticipants(participants: TreeSet<EncounterParticipant>) = Encounter(id, name, participants, finished, round, activeId)
+                     val activeId: Long?,
+                     val timers: List<DurationTimer>?) {
 
     fun containsPartyMember(memberId: Long): Boolean {
         return participants.find { p -> p.type == ParticipantType.PARTY_MEMBER && p.refId == memberId } != null

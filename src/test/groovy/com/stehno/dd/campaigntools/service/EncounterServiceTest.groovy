@@ -46,7 +46,7 @@ class EncounterServiceTest extends Specification {
         encounters.size() == 1
 
         and:
-        encounters[0] == new Encounter(1, 'Unit Test of Horrors', new TreeSet<EncounterParticipant>(), false, null, null)
+        encounters[0] == new Encounter(1, 'Unit Test of Horrors', new TreeSet<EncounterParticipant>(), false, null, null, [])
     }
 
     def 'add and retrieve (encounter with content)'() {
@@ -60,12 +60,14 @@ class EncounterServiceTest extends Specification {
             ] as TreeSet<EncounterParticipant>,
             false,
             null,
-            null
+            null,
+            [new DurationTimer(1, 'Charm spell', 1, 3)]
         )
 
         service.addEncounter('Unit Test of Horrors')
         service.addMonsterParticipant(1, "Bug", 18, 17, 123)
         service.addPartyParticipant(1, new PartyMember(1, 'Bobor', 'Chris', 'Barbarian (7)', 'Half-orc', 'Chaotic-good', 12, 8), 12)
+        service.addTimer(1, new DurationTimer(null, 'Charm spell', 1, 3))
 
         when:
         def encounters = service.retrieveAllEncounters()

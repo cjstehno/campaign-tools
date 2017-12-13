@@ -52,7 +52,7 @@
 
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Party</h3>
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Party</h3>
                 </div>
 
                 <table class="table table-striped">
@@ -102,7 +102,7 @@
 
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Encounter</h3>
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-knight"></span> Participants</h3>
                 </div>
 
                 <div class="panel-body">
@@ -152,7 +152,7 @@
                         <td><#if combatant.initiative &gt; 0>${combatant.initiative}<#else><em>n/a</em></#if></td>
                         <td <#if combatant.hitPoints??>class="participant-description"</#if>>${combatant.description}</td>
                         <td>${combatant.armorClass}</td>
-                        <#if combatant.hitPoints?? >
+                        <#if combatant.hitPoints?? && combatant.hitPoints &gt; 0 >
                         <td class="participant-hp">${combatant.hitPoints}</td>
                         <#else>
                         <td><em>n/a</em></td>
@@ -187,6 +187,71 @@
 
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><span class="glyphicon glyphicon-hourglass"></span> Duration Timers</h4>
+                </div>
+
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Elapsed</th>
+                            <th>Remaining</th>
+                            <th>
+                                <div class="pull-right">
+                                    <a class="btn btn-sm btn-default <#if encounter.finished || !encounter.round?? >disabled</#if>" href="#add-timer" role="button" title="Add Timer"><span class="glyphicon glyphicon-plus"></span></a>
+                                </div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#list encounter.timers as timer>
+                            <tr data-id="${timer.id}">
+                                <td>
+                                    <#if timer.isActive(encounter.round)>
+                                        <span class="glyphicon glyphicon-fire" style="color:orangered" title="Active"></span>
+                                    <#else>
+                                        <span class="glyphicon glyphicon-warning-sign" style="color:#8a6d3b" title="Expired"></span>
+                                    </#if>
+                                </td>
+                                <td>${timer.description}</td>
+                                <td>
+                                    <#if timer.isActive(encounter.round)>
+                                        ${timeFormatter.format(encounter.round - timer.startRound + 1)}
+                                        <#else>
+                                        <em>Expired</em>
+                                    </#if>
+                                </td>
+                                <td>
+                                    <#if timer.isActive(encounter.round)>
+                                        ${timeFormatter.format(timer.endRound - timer.startRound + 1 - (encounter.round - timer.startRound))}
+                                    <#else>
+                                        <em>Expired</em>
+                                    </#if>
+                                </td><!-- remaining:  -->
+                                <td>
+                                    <div class="pull-right">
+                                        <a class="btn btn-sm btn-warning <#if encounter.finished || !encounter.round?? >disabled</#if>" href="#remove-timer" role="button" title="Cancel Timer"><span class="glyphicon glyphicon-remove"></span></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <#else>
+                            <tr>
+                                <td colspan="4"><em>No timers configured.</em></td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <#include "encounter_add.ftl" />
@@ -215,6 +280,56 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary">Apply</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="add-timer-dialog" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><img src="/img/encounter.png" style="width: 32px;"/> Add Duration Timer</h4>
+            </div>
+            <div class="modal-body">
+
+                <form>
+                    <input type="hidden" name="startRound" value="${encounter.round}" />
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" class="form-control" name="description" placeholder="Description">
+                    </div>
+                    <div class="form-group">
+                        <label>Duration</label>
+                        <input type="text" class="form-control" name="duration" placeholder="Duration (rounds)">
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Add</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="remove-timer-dialog" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><img src="/img/encounter.png" style="width: 32px;"/> Remove Duration Timer?</h4>
+            </div>
+            <div class="modal-body">
+
+                <p>Are you sure you want to <strong>remove</strong> this duration timer from the encounter?</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger">Remove</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

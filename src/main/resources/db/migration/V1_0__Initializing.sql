@@ -15,32 +15,40 @@
 --
 
 CREATE TABLE IF NOT EXISTS party_member (
-  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  id             BIGINT PRIMARY KEY AUTO_INCREMENT,
   character_name VARCHAR(25) NOT NULL,
-  player_name VARCHAR(25) NOT NULL,
-  class_level VARCHAR(40) NOT NULL,
-  race VARCHAR(10) NOT NULL,
-  alignment VARCHAR(20) NOT NULL,
-  armor_class INT NOT NULL,
-  perception INT NOT NULL
+  player_name    VARCHAR(25) NOT NULL,
+  class_level    VARCHAR(40) NOT NULL,
+  race           VARCHAR(10) NOT NULL,
+  alignment      VARCHAR(20) NOT NULL,
+  armor_class    INT         NOT NULL,
+  perception     INT         NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS encounter (
-  id BIGINT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(30) NOT NULL ,
-  finished BOOLEAN NOT NULL DEFAULT FALSE ,
-  round INT DEFAULT NULL,
-  active_id BIGINT DEFAULT NULL
+  id        BIGINT PRIMARY KEY   AUTO_INCREMENT,
+  name      VARCHAR(30) NOT NULL,
+  finished  BOOLEAN     NOT NULL DEFAULT FALSE,
+  round     INT                  DEFAULT NULL,
+  active_id BIGINT               DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS encounter_participants (
   encounter_id BIGINT REFERENCES encounter (id),
-  id BIGINT PRIMARY KEY AUTO_INCREMENT,
-  ref_id BIGINT,
-  type VARCHAR(20) NOT NULL,
-  initiative INT NOT NULL,
-  description VARCHAR(30) NOT NULL,
-  armor_class INT NOT NULL ,
-  hit_points INT DEFAULT NULL,
-  conditions ARRAY NOT NULL
+  id           BIGINT PRIMARY KEY AUTO_INCREMENT,
+  ref_id       BIGINT,
+  type         VARCHAR(20) NOT NULL,
+  initiative   INT         NOT NULL,
+  description  VARCHAR(30) NOT NULL,
+  armor_class  INT         NOT NULL,
+  hit_points   INT                DEFAULT NULL,
+  conditions   ARRAY       NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS encounter_timers (
+  encounter_id BIGINT REFERENCES encounter (id),
+  id           BIGINT PRIMARY KEY AUTO_INCREMENT,
+  description  VARCHAR(25) NOT NULL,
+  start_round  INT         NOT NULL,
+  end_round    INT         NOT NULL
+)
