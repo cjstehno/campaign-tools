@@ -15,13 +15,19 @@
  */
 package com.stehno.dd.campaigntools.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.stehno.dd.campaigntools.model.PartyMember
 import com.stehno.dd.campaigntools.repository.PartyRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.io.File
+import java.io.InputStream
+import java.lang.System.currentTimeMillis
 
 @Service
-class PartyService(@Autowired private val repository: PartyRepository) {
+class PartyService(@Autowired private val repository: PartyRepository,
+                   @Autowired private val objectMapper: ObjectMapper) {
 
     fun retrieveAll(): List<PartyMember> {
         return repository.retrieveAll()
@@ -41,5 +47,19 @@ class PartyService(@Autowired private val repository: PartyRepository) {
 
     fun updateMember(member: PartyMember) {
         repository.update(member)
+    }
+
+    fun exportMembers(): File {
+        val file = File(System.getProperty("temp.dir"), "party-export-${currentTimeMillis()}.json")
+
+        objectMapper.writeValue(file, repository.retrieveAll())
+
+        return file
+    }
+
+    fun importMembers(input: InputStream) {
+        objectMapper.readValue<List<PartyMember>>(input).forEach { m ->
+            repository.add(m)
+        }
     }
 }

@@ -18,10 +18,15 @@ package com.stehno.dd.campaigntools.controller
 import com.stehno.dd.campaigntools.model.PartyMember
 import com.stehno.dd.campaigntools.service.PartyService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.util.FileCopyUtils.copy
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.ModelAndView
+import javax.servlet.http.HttpServletResponse
 
 @Controller
 class PartyController(@Autowired private val partyService: PartyService) {
@@ -53,5 +58,26 @@ class PartyController(@Autowired private val partyService: PartyService) {
     fun removeMember(@PathVariable("memberId") memberId: Long): ResponseEntity<Unit> {
         partyService.removeMember(memberId)
         return ResponseEntity.ok(Unit)
+    }
+
+    @GetMapping(path = ["/party/export"], produces = [APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun exportMembers(response: HttpServletResponse) {
+        val exportFile = partyService.exportMembers()
+
+        response.contentType = APPLICATION_JSON_VALUE
+        response.setHeader("Content-Disposition", "attachment; filename=party-export.json")
+        response.setHeader("Content-Length", exportFile.length().toString())
+
+        copy(exportFile.inputStream(), response.outputStream)
+    }
+
+    @PostMapping(path = ["/party/import"], consumes = [MULTIPART_FORM_DATA_VALUE])
+    fun importMembers(@RequestParam("file") file: MultipartFile): String {
+        file.inputStream.use {
+            partyService.importMembers(it)
+        }
+
+        return "redirect:/party"
     }
 }

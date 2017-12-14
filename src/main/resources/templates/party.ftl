@@ -56,7 +56,13 @@
                     <th>Alignment</th>
                     <th>Armor Class</th>
                     <th>Perception</th>
-                    <th>&nbsp;</th>
+                    <th>
+                        <div class="pull-right">
+                            <a href="#add-member" class="btn btn-primary btn-sm" role="button" title="Add member"><span class="glyphicon glyphicon-plus"></span></a>
+                            <a href="#import-members" class="btn btn-default btn-sm" role="button" title="Import members"><span class="glyphicon glyphicon-cloud-upload"></span></a>
+                            <a href="/party/export" class="btn btn-default btn-sm" role="button" title="Export members"><span class="glyphicon glyphicon-cloud-download"></span></a>
+                        </div>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
@@ -72,8 +78,8 @@
                         <td class="perception">${member.perception}</td>
                         <td>
                             <div class="pull-right">
-                                <a href="#edit-member" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-                                <a href="#remove-member" class="btn btn-danger btn-sm" role="button"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                <a href="#edit-member" class="btn btn-primary btn-sm" role="button" title="Edit member"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a href="#remove-member" class="btn btn-danger btn-sm" role="button" title="Remove member"><span class="glyphicon glyphicon-remove"></span></a>
                             </div>
                         </td>
                     </tr>
@@ -81,14 +87,6 @@
 
                 </tbody>
             </table>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="pull-right">
-                <a href="#add-member" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus"></span> Add Member</a>
-            </div>
         </div>
     </div>
 
@@ -207,6 +205,32 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger">Remove</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="import-members-dialog" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><img src="/img/medieval-pavilion.png" style="width: 32px;"/> Import Party Members</h4>
+            </div>
+            <div class="modal-body">
+
+                <form action="/party/import" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file">File input</label>
+                        <input type="file" name="file" id="file">
+                        <p class="help-block">Choose a party JSON file to import.</p>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Import</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

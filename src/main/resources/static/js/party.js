@@ -119,3 +119,12 @@ $('#remove-member-dialog button.btn-danger').on('click', function (evt) {
         }
     });
 });
+
+$('a[href="#import-members"]').on('click', function (evt) {
+    var dialog = $('#import-members-dialog');
+    dialog.modal();
+});
+
+$('#import-members-dialog button.btn-primary').on('click', function (evt) {
+    $('#import-members-dialog').find('form').submit();
+});
