@@ -43,7 +43,8 @@
 
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12">
-            <h1 data-id="${encounter.id}"><img src="/img/encounter.png" style="width: 64px;"/> Encounter: ${encounter.name}<#if encounter.finished> (Finished)</#if></h1>
+            <h1 data-id="${encounter.id}"><img src="/img/encounter.png" style="width: 64px;"/> Encounter: ${encounter.name}<#if encounter.finished>
+                (Finished)</#if></h1>
         </div>
     </div>
 
@@ -82,7 +83,8 @@
                                     <a class="add-party-member-button btn btn-sm btn-default disabled" href="#" role="button"><span
                                         class="glyphicon glyphicon-plus" title="Add to Encounter"></span></a>
                                 <#else>
-                                    <a class="add-party-member-button btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button"><span
+                                    <a class="add-party-member-button btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#"
+                                       role="button"><span
                                         class="glyphicon glyphicon-plus" title="Add to Encounter"></span></a>
                                 </#if>
                             </div>
@@ -116,11 +118,15 @@
                     </div>
                     <div class="pull-right">
 
-                        <a class="start-button <#if encounter.finished || encounter.round?? >disabled</#if> btn btn-sm btn-default" href="#" role="button"><span class="glyphicon glyphicon-play"></span> Start</a>
-                        <a class="next-button <#if encounter.finished || !encounter.round?? >disabled</#if> btn btn-sm btn-primary" href="#" role="button"><span class="glyphicon glyphicon-step-forward"></span>Next</a>
-                        <a class="finish-button <#if encounter.finished || !encounter.round?? >disabled</#if> btn btn-sm btn-success" href="#" role="button"><span class="glyphicon glyphicon-stop"></span>Finish</a>
+                        <a class="start-button <#if encounter.finished || encounter.round?? >disabled</#if> btn btn-sm btn-default" href="#"
+                           role="button"><span class="glyphicon glyphicon-play"></span> Start</a>
+                        <a class="next-button <#if encounter.finished || !encounter.round?? >disabled</#if> btn btn-sm btn-primary" href="#"
+                           role="button"><span class="glyphicon glyphicon-step-forward"></span>Next</a>
+                        <a class="finish-button <#if encounter.finished || !encounter.round?? >disabled</#if> btn btn-sm btn-success" href="#"
+                           role="button"><span class="glyphicon glyphicon-stop"></span>Finish</a>
 
-                        <a class="btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#add-monster" role="button"><span class="glyphicon glyphicon-plus"></span> Add</a>
+                        <a class="btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#add-monster" role="button"><span
+                            class="glyphicon glyphicon-plus"></span> Add</a>
                     </div>
                 </div>
 
@@ -139,7 +145,7 @@
                     </thead>
                     <tbody>
                     <#list encounter.participants as combatant>
-                    <tr data-id="${combatant.id}">
+                    <tr data-id="${combatant.id}" data-xp="${combatant.experiencePoints}">
                         <td>
                             <#if encounter.activeId?? && encounter.activeId == combatant.id >
                                 <span class="glyphicon glyphicon-chevron-right" style="color: green;" title="Active combatant"></span>
@@ -169,14 +175,17 @@
                         <td>
                             <div class="pull-right">
                                 <#if combatant.hitPoints?? >
-                                <a class="adjust-hp-button btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button"><img src="/img/heart-beats.png"
-                                                                                                               style="width: 24px;" title="Adjust HP"></a>
+                                <a class="adjust-hp-button btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button"><img
+                                    src="/img/heart-beats.png"
+                                    style="width: 24px;" title="Adjust HP"></a>
                                 </#if>
-                                <a class="conditions-button btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button"><img src="/img/heart-inside.png"
-                                                                                                                style="width: 24px;"
-                                                                                                                title="Conditions"></a>
-                                <a class="remove-button btn btn-sm btn-warning <#if encounter.finished>disabled</#if>" href="#" role="button"><span class="glyphicon glyphicon-remove"
-                                                                                                             title="Remove from Encounter"></span></a>
+                                <a class="conditions-button btn btn-sm btn-default <#if encounter.finished>disabled</#if>" href="#" role="button"><img
+                                    src="/img/heart-inside.png"
+                                    style="width: 24px;"
+                                    title="Conditions"></a>
+                                <a class="remove-button btn btn-sm btn-warning <#if encounter.finished>disabled</#if>" href="#" role="button"><span
+                                    class="glyphicon glyphicon-remove"
+                                    title="Remove from Encounter"></span></a>
                             </div>
                         </td>
                     </tr>
@@ -184,6 +193,13 @@
 
                     </tbody>
                 </table>
+
+                <div class="panel-footer">
+                    &nbsp;
+                    <div class="pull-right">
+                        <em>${encounter.totalExperience} xp</em>
+                    </div>
+                </div>
 
             </div>
 
@@ -207,42 +223,44 @@
                             <th>Remaining</th>
                             <th>
                                 <div class="pull-right">
-                                    <a class="btn btn-sm btn-default <#if encounter.finished || !encounter.round?? >disabled</#if>" href="#add-timer" role="button" title="Add Timer"><span class="glyphicon glyphicon-plus"></span></a>
+                                    <a class="btn btn-sm btn-default <#if encounter.finished || !encounter.round?? >disabled</#if>" href="#add-timer"
+                                       role="button" title="Add Timer"><span class="glyphicon glyphicon-plus"></span></a>
                                 </div>
                             </th>
                         </tr>
                         </thead>
                         <tbody>
                         <#list encounter.timers as timer>
-                            <tr data-id="${timer.id}">
-                                <td>
+                        <tr data-id="${timer.id}">
+                            <td>
                                     <#if timer.isActive(encounter.round)>
                                         <span class="glyphicon glyphicon-fire" style="color:orangered" title="Active"></span>
                                     <#else>
                                         <span class="glyphicon glyphicon-warning-sign" style="color:#8a6d3b" title="Expired"></span>
                                     </#if>
-                                </td>
-                                <td>${timer.description}</td>
-                                <td>
+                            </td>
+                            <td>${timer.description}</td>
+                            <td>
                                     <#if timer.isActive(encounter.round)>
                                         ${timeFormatter.format(encounter.round - timer.startRound + 1)}
-                                        <#else>
+                                    <#else>
                                         <em>Expired</em>
                                     </#if>
-                                </td>
-                                <td>
+                            </td>
+                            <td>
                                     <#if timer.isActive(encounter.round)>
                                         ${timeFormatter.format(timer.endRound - timer.startRound + 1 - (encounter.round - timer.startRound))}
                                     <#else>
                                         <em>Expired</em>
                                     </#if>
-                                </td><!-- remaining:  -->
-                                <td>
-                                    <div class="pull-right">
-                                        <a class="btn btn-sm btn-warning <#if encounter.finished || !encounter.round?? >disabled</#if>" href="#remove-timer" role="button" title="Cancel Timer"><span class="glyphicon glyphicon-remove"></span></a>
-                                    </div>
-                                </td>
-                            </tr>
+                            </td><!-- remaining:  -->
+                            <td>
+                                <div class="pull-right">
+                                    <a class="btn btn-sm btn-warning <#if encounter.finished || !encounter.round?? >disabled</#if>"
+                                       href="#remove-timer" role="button" title="Cancel Timer"><span class="glyphicon glyphicon-remove"></span></a>
+                                </div>
+                            </td>
+                        </tr>
                         <#else>
                             <tr>
                                 <td colspan="4"><em>No timers configured.</em></td>
@@ -297,7 +315,7 @@
             <div class="modal-body">
 
                 <form>
-                    <input type="hidden" name="startRound" value="${encounter.round}" />
+                    <input type="hidden" name="startRound" value="<#if encounter.round?? >${encounter.round}<#else>0</#if>"/>
                     <div class="form-group">
                         <label>Description</label>
                         <input type="text" class="form-control" name="description" placeholder="Description">

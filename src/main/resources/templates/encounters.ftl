@@ -53,6 +53,7 @@
                     <th>Name</th>
                     <th>Round</th>
                     <th># Participants</th>
+                    <td>Experience Points</td>
                     <th>&nbsp;</th>
                 </tr>
                 </thead>
@@ -70,6 +71,7 @@
                         <td><a href="/encounter/${encounter.id}">${encounter.name}</a></td>
                         <td><#if encounter.round?? >${encounter.round}<#else><em>Not started</em></#if></td>
                         <td>${encounter.participants?size}</td>
+                        <td>${encounter.totalExperience}</td>
                         <td class="pull-right">
                             <a href="#remove-encounter" class="btn btn-danger btn-sm" role="button"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                         </td>

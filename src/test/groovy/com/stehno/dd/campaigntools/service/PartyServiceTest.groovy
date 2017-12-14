@@ -15,6 +15,8 @@
  */
 package com.stehno.dd.campaigntools.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.stehno.dd.campaigntools.TestingDatabase
 import com.stehno.dd.campaigntools.model.PartyMember
 import com.stehno.dd.campaigntools.repository.PartyRepository
@@ -28,7 +30,7 @@ class PartyServiceTest extends Specification {
     @Rule TestingDatabase database = new TestingDatabase()
 
     private final PartyRepository repository = new PartyRepository(database.template)
-    private final PartyService service = new PartyService(repository)
+    private final PartyService service = new PartyService(repository, new ObjectMapper().with { registerModule(new KotlinModule()) })
 
     def 'retrieveAll with none'() {
         expect:

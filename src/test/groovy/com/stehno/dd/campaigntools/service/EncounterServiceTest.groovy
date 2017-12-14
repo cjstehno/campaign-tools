@@ -55,8 +55,8 @@ class EncounterServiceTest extends Specification {
             1,
             'Unit Test of Horrors',
             [
-                new EncounterParticipant(1, 0, ParticipantType.MONSTER, 18, 'Bug', 17, 123, [] as Set<Condition>),
-                new EncounterParticipant(1, 1, ParticipantType.PARTY_MEMBER, 12, 'Bobor (Chris)', 12, null, [] as TreeSet<Condition>)
+                new EncounterParticipant(1, 0, ParticipantType.MONSTER, 18, 'Bug', 17, 123, [] as Set<Condition>, 100),
+                new EncounterParticipant(1, 1, ParticipantType.PARTY_MEMBER, 12, 'Bobor (Chris)', 12, null, [] as TreeSet<Condition>, 0)
             ] as TreeSet<EncounterParticipant>,
             false,
             null,
@@ -65,7 +65,7 @@ class EncounterServiceTest extends Specification {
         )
 
         service.addEncounter('Unit Test of Horrors')
-        service.addMonsterParticipant(1, "Bug", 18, 17, 123)
+        service.addMonsterParticipant(1, "Bug", 18, 17, 123, 100)
         service.addPartyParticipant(1, new PartyMember(1, 'Bobor', 'Chris', 'Barbarian (7)', 'Half-orc', 'Chaotic-good', 12, 8), 12)
         service.addTimer(1, new DurationTimer(null, 'Charm spell', 1, 3))
 
@@ -100,7 +100,7 @@ class EncounterServiceTest extends Specification {
     def 'active and round management'() {
         setup:
         service.addEncounter('Unit Test of Horrors')
-        service.addMonsterParticipant(1, "Bug", 18, 17, 123)
+        service.addMonsterParticipant(1, "Bug", 18, 17, 123, 123)
         service.addPartyParticipant(1, new PartyMember(1, 'Bobor', 'Chris', 'Barbarian (7)', 'Half-orc', 'Chaotic-good', 12, 8), 12)
 
         when:

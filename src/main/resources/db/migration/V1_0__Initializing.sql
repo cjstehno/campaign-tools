@@ -34,15 +34,16 @@ CREATE TABLE IF NOT EXISTS encounter (
 );
 
 CREATE TABLE IF NOT EXISTS encounter_participants (
-  encounter_id BIGINT REFERENCES encounter (id),
-  id           BIGINT PRIMARY KEY AUTO_INCREMENT,
-  ref_id       BIGINT,
-  type         VARCHAR(20) NOT NULL,
-  initiative   INT         NOT NULL,
-  description  VARCHAR(30) NOT NULL,
-  armor_class  INT         NOT NULL,
-  hit_points   INT                DEFAULT NULL,
-  conditions   ARRAY       NOT NULL
+  encounter_id      BIGINT REFERENCES encounter (id),
+  id                BIGINT PRIMARY KEY   AUTO_INCREMENT,
+  ref_id            BIGINT,
+  type              VARCHAR(20) NOT NULL,
+  initiative        INT         NOT NULL,
+  description       VARCHAR(30) NOT NULL,
+  armor_class       INT         NOT NULL,
+  hit_points        INT                  DEFAULT NULL,
+  conditions        ARRAY       NOT NULL,
+  experience_points INT         NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS encounter_timers (

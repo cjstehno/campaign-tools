@@ -25,6 +25,10 @@ data class Encounter(val id: Long,
                      val activeId: Long?,
                      val timers: List<DurationTimer>?) {
 
+
+    val totalExperience: Int
+        get() = participants.sumBy { it.experiencePoints }
+
     fun containsPartyMember(memberId: Long): Boolean {
         return participants.find { p -> p.type == ParticipantType.PARTY_MEMBER && p.refId == memberId } != null
     }
@@ -50,7 +54,8 @@ data class EncounterParticipant(val id: Long?,
                                 val description: String,
                                 val armorClass: Int,
                                 val hitPoints: Int?,
-                                val conditions: Set<Condition>) : Comparable<EncounterParticipant> {
+                                val conditions: Set<Condition>,
+                                val experiencePoints: Int = 0) : Comparable<EncounterParticipant> {
 
     override fun compareTo(other: EncounterParticipant): Int = when {
         other.initiative > initiative -> 1

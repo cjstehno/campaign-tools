@@ -40,7 +40,6 @@ $('a[href="#add-monster"]').on('click', function (evt) {
     dialog.modal();
 });
 
-
 $('#add-monster button.btn-primary').on('click', function (evt) {
     var encounterId = $('h1[data-id]').attr('data-id');
 
@@ -52,6 +51,7 @@ $('#add-monster button.btn-primary').on('click', function (evt) {
     var description = $('input[name=description]', form).val();
     var armorClass = parseInt($('input[name=ac]', form).val());
     var hitPoints = parseInt($('input[name=hp]', form).val());
+    var xp = parseInt($('input[name=xp]', form).val());
 
     $.ajax({
         url: '/encounter/' + encounterId,
@@ -67,7 +67,7 @@ $('#add-monster button.btn-primary').on('click', function (evt) {
             armorClass: armorClass,
             hitPoints: hitPoints,
             conditions: [],
-            notes: ''
+            experiencePoints: xp
         }),
         success: function (result) {
             location = '/encounter/' + encounterId;

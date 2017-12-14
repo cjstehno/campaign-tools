@@ -40,17 +40,17 @@ class EncounterService(@Autowired private val repository: EncounterRepository) {
         repository.removeParticipant(encounterId, participantId)
     }
 
-    fun addMonsterParticipant(encounterId: Long, description: String, initiative: Int, armorClass: Int, hitPoints: Int) {
+    fun addMonsterParticipant(encounterId: Long, description: String, initiative: Int, armorClass: Int, hitPoints: Int, experiencePoints: Int) {
         repository.addParticipant(
             encounterId,
-            EncounterParticipant(null, null, MONSTER, initiative, description, armorClass, hitPoints, sortedSetOf())
+            EncounterParticipant(null, null, MONSTER, initiative, description, armorClass, hitPoints, sortedSetOf(), experiencePoints)
         )
     }
 
     fun addPartyParticipant(encounterId: Long, member: PartyMember, initiative: Int) {
         repository.addParticipant(
             encounterId,
-            EncounterParticipant(null, member.id, PARTY_MEMBER, initiative, member.displayName, member.armorClass, null, sortedSetOf())
+            EncounterParticipant(null, member.id, PARTY_MEMBER, initiative, member.displayName, member.armorClass, null, sortedSetOf(), 0)
         )
     }
 

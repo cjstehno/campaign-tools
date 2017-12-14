@@ -34,13 +34,13 @@ class EncounterRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
         private const val SELECT_SQL = """SELECT
                 e.id AS id,e.name AS name,e.finished AS finished,e.round AS round,e.active_id AS active_id,
                 p.id AS participant_id, p.ref_id AS participant_ref_id, p.type AS participant_type,p.initiative AS participant_initiative,p.description AS participant_description,
-                p.armor_class AS participant_armor_class ,p.hit_points AS participant_hit_points,p.conditions AS participant_conditions,
+                p.armor_class AS participant_armor_class ,p.hit_points AS participant_hit_points,p.conditions AS participant_conditions, p.experience_points AS participant_experience_points,
                 t.id AS timer_id, t.description AS timer_description, t.start_round AS timer_start_round, t.end_round AS timer_end_round
                 FROM encounter e
                 LEFT OUTER JOIN encounter_participants p ON e.id = p.encounter_id
                 LEFT OUTER JOIN encounter_timers t ON e.id = t.encounter_id
             """
-        private const val INSERT_PARTICIPANT_SQL = "INSERT INTO encounter_participants (encounter_id, ref_id, type, initiative, description, armor_class, hit_points, conditions) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        private const val INSERT_PARTICIPANT_SQL = "INSERT INTO encounter_participants (encounter_id, ref_id, type, initiative, description, armor_class, hit_points, conditions, experience_points) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         private const val REMOVE_PARTICIPANT_SQL = "DELETE FROM encounter_participants WHERE encounter_id=? AND id=?"
         private const val REMOVE_ENCOUNTER_SQL = "DELETE FROM encounter_participants WHERE encounter_id=?"
         private const val REMOVE_TIMERS_SQL = "DELETE FROM encounter_timers WHERE encounter_id=?"
@@ -54,6 +54,7 @@ class EncounterRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
         private const val NEXT_ENCOUNTER_SQL = "UPDATE encounter SET round=round+?, active_id=? WHERE id=?"
         private const val STOP_ENCOUNTER_SQL = "UPDATE encounter SET finished=TRUE, active_id=NULL WHERE id=?"
         private const val REMOVE_TIMER_SQL ="delete from encounter_timers where encounter_id=? and id=?"
+        private const val ADD_TIMER_SQL = "INSERT INTO encounter_timers (encounter_id, description, start_round, end_round) VALUES (?, ?, ?, ?)"
     }
 
     fun retrieveAll(): List<Encounter> {
@@ -81,7 +82,8 @@ class EncounterRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
             participant.description,
             participant.armorClass,
             participant.hitPoints,
-            participant.conditions.map { it.name }.toTypedArray()
+            participant.conditions.map { it.name }.toTypedArray(),
+            participant.experiencePoints
         )
     }
 
@@ -137,10 +139,7 @@ class EncounterRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
     }
 
     fun addTimer(encounterId: Long, durationTimer: DurationTimer) {
-        jdbcTemplate.update(
-            "INSERT INTO encounter_timers (encounter_id, description, start_round, end_round) VALUES (?, ?, ?, ?)",
-            encounterId, durationTimer.description, durationTimer.startRound, durationTimer.endRound
-        )
+        jdbcTemplate.update(ADD_TIMER_SQL, encounterId, durationTimer.description, durationTimer.startRound, durationTimer.endRound)
     }
 
     fun removeTimer(encounterId: Long, timerId: Long) {
@@ -193,7 +192,8 @@ class EncounterParticipantRowMapper : RowMapper<EncounterParticipant> {
                 rs.getString("${FIELD_PREFIX}description"),
                 rs.getInt("${FIELD_PREFIX}armor_class"),
                 rs.getInt("${FIELD_PREFIX}hit_points"),
-                extractArray(rs, "${FIELD_PREFIX}conditions")
+                extractArray(rs, "${FIELD_PREFIX}conditions"),
+                rs.getInt("${FIELD_PREFIX}experience_points")
             )
             else -> null
         }

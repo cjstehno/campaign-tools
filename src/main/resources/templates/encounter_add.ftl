@@ -53,35 +53,15 @@
                                     <label>Hit Points</label>
                                     <input type="number" class="form-control" name="hp" placeholder="Hit Points">
                                 </div>
+                                <div class="form-group">
+                                    <label>Experience Points</label>
+                                    <input type="number" class="form-control" name="xp" placeholder="Experience Points">
+                                </div>
                             </form>
                         </div>
 
                         <div role="tabpanel" class="tab-pane" id="monster-existing-panel">
-                            <form>
-                                <input type="hidden" name="type" value="MONSTER"/>
-                                <div class="form-group">
-                                    <label>Template</label>
-                                    <select name="monster-template" class="form-control">
-                                        <option>Select Monster</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Description</label>
-                                    <input type="text" class="form-control" name="description" placeholder="Description">
-                                </div>
-                                <div class="form-group">
-                                    <label>Initiative</label>
-                                    <input type="number" class="form-control" name="initiative" placeholder="Initiative">
-                                </div>
-                                <div class="form-group">
-                                    <label>Armor Class</label>
-                                    <input type="number" class="form-control" name="ac" placeholder="Armor Class">
-                                </div>
-                                <div class="form-group">
-                                    <label>Hit Points</label>
-                                    <input type="number" class="form-control" name="hp" placeholder="Hit Points">
-                                </div>
-                            </form>
+                            <p>This will pull from a list of existing configured monsters.</p>
                         </div>
                     </div>
 
