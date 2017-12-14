@@ -13,7 +13,7 @@ plugins {
     id "org.springframework.boot" version "1.5.9.RELEASE"
 
     id 'groovy'
-    id "com.github.hierynomus.license" version '0.13.1'
+    id "com.github.hierynomus.license" version '0.14.0'
     id 'jacoco'
 }
 
