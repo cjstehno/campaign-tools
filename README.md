@@ -4,6 +4,8 @@ This is a simple spring-boot application I created to help manage my D&D campaig
 local server or on your local machine during a game.
 
 > WARNING: this is just an application to get stuff done for my personal use - it's pretty raw and not at all ready for prime time.
+ 
+![alt text](/dmt-screen-encounter.png "Encounter Screen")
 
 ## Build
 
