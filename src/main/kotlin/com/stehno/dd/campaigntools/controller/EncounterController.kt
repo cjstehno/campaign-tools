@@ -97,7 +97,7 @@ class EncounterController {
     fun addMonsterParticipant(@PathVariable("encounterId") encounterId: Long, @RequestBody participant: EncounterParticipant): ResponseEntity<Unit> {
         log.info("Adding {} to the encounter", participant.description)
 
-        encounterService.addMonsterParticipant(encounterId, participant.description, participant.initiative, participant.armorClass, participant.hitPoints!!, participant.experiencePoints!!)
+        encounterService.addMonsterParticipant(encounterId, participant.description, participant.initiative, participant.armorClass, participant.hitPoints!!, participant.experiencePoints)
 
         return ResponseEntity.ok(Unit)
     }

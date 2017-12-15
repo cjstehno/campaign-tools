@@ -29,8 +29,4 @@ fun main(args: Array<String>) {
 }
 
 @Bean
-fun objectMapper(): ObjectMapper {
-    val mapper = ObjectMapper()
-    mapper.registerModule(KotlinModule())
-    return mapper
-}
+fun objectMapper(): ObjectMapper = ObjectMapper().registerModule(KotlinModule())
