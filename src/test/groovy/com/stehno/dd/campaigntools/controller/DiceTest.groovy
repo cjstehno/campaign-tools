@@ -15,11 +15,13 @@
  */
 package com.stehno.dd.campaigntools.controller
 
+import com.stehno.dd.campaigntools.model.Dice
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class DiceTest extends Specification {
 
-    def '4d6+20'() {
+    @Unroll 'parse: #expr'() {
         when:
         Dice dice = Dice.parse(expr)
 
@@ -34,5 +36,6 @@ class DiceTest extends Specification {
         'd6'      || 'd6'
         ' 3d6+2 ' || '3d6+2'
         '2d100'   || '2d100'
+        '10d10'   || '10d10'
     }
 }

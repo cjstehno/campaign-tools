@@ -36,7 +36,7 @@ class MonsterRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
 
     fun retrieve(monsterId: Long): Monster = jdbcTemplate.queryForObject("$RETRIEVE_ALL_SQL where id=?", MonsterRowMapper.INSTANCE, monsterId)
 
-    fun add(monster: Monster) = jdbcTemplate.update(ADD_SQL, monster.name, monster.page, monster.armorClass, monster.hitDice, monster.experiencePoints)
+    fun add(monster: Monster) = jdbcTemplate.update(ADD_SQL, monster.name, monster.page, monster.armorClass, monster.hitDice.toString(), monster.experiencePoints)
 
     fun remove(monsterId: Long) = jdbcTemplate.update(REMOVE_SQL, monsterId)
 

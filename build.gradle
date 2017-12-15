@@ -67,8 +67,8 @@ license {
     ext.year = Calendar.instance.get(Calendar.YEAR)
 
     excludes([
-        '**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg',
-        '**/*.min.js',
+        '**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg', '**/*.png',
+        '**/*.min.js', '**/*.css.map',
         '**/bootstrap.*', '**/bootstrap-theme.css', '**/glyphicons-halflings-regular.*'
     ])
 }

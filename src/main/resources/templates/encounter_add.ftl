@@ -35,7 +35,7 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="monster-new-panel">
-                            <form>
+                            <form class="adhoc-monster">
                                 <input type="hidden" name="type" value="MONSTER"/>
                                 <div class="form-group">
                                     <label>Description</label>
@@ -61,7 +61,39 @@
                         </div>
 
                         <div role="tabpanel" class="tab-pane" id="monster-existing-panel">
-                            <p>This will pull from a list of existing configured monsters.</p>
+                            <form class="selected-monster">
+                                <input type="hidden" name="type" value="MONSTER"/>
+                                <div class="form-group">
+                                    <label>Monster Template</label>
+                                    <select class="form-control">
+                                        <#if monsters??>
+                                            <#list monsters as monster>
+                                                <option>${monster.name}</option>
+                                            </#list>
+                                        </#if>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <input type="text" class="form-control" name="description" placeholder="Description">
+                                </div>
+                                <div class="form-group">
+                                    <label>Initiative</label>
+                                    <input type="number" class="form-control" name="initiative" placeholder="Initiative">
+                                </div>
+                                <div class="form-group">
+                                    <label>Armor Class</label>
+                                    <input type="number" class="form-control" name="ac" placeholder="Armor Class">
+                                </div>
+                                <div class="form-group">
+                                    <label>Hit Points</label>
+                                    <input type="number" class="form-control" name="hp" placeholder="Hit Points">
+                                </div>
+                                <div class="form-group">
+                                    <label>Experience Points</label>
+                                    <input type="number" class="form-control" name="xp" placeholder="Experience Points">
+                                </div>
+                            </form>
                         </div>
                     </div>
 

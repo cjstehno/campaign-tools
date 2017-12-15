@@ -19,6 +19,7 @@ import com.stehno.dd.campaigntools.model.Condition
 import com.stehno.dd.campaigntools.model.DurationTimer
 import com.stehno.dd.campaigntools.model.EncounterParticipant
 import com.stehno.dd.campaigntools.service.EncounterService
+import com.stehno.dd.campaigntools.service.MonsterService
 import com.stehno.dd.campaigntools.service.PartyService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,6 +40,7 @@ class EncounterController {
 
     @Autowired lateinit var partyService: PartyService
     @Autowired lateinit var encounterService: EncounterService
+    @Autowired lateinit var monsterService: MonsterService
 
     @GetMapping(path = ["/"])
     fun index(): String {
@@ -82,6 +84,7 @@ class EncounterController {
         mav.addObject("conditions", Condition.values())
         mav.addObject("elapsed", ElapsedTime(encounter?.round))
         mav.addObject("timeFormatter", TimeFormatter.INSTANCE)
+        mav.addObject("monsters", monsterService.retrieveAll())
 
         return mav
     }

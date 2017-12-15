@@ -15,10 +15,18 @@
  */
 package com.stehno.dd.campaigntools.model
 
+
 data class Monster(val id: Long?,
                    val name: String,
                    val page: String,
                    val armorClass: Int,
-                   val hitDice: String,
+                   val hitDice: Dice,
                    val experiencePoints: Int) {
+
+    constructor(id: Long?,
+                name: String,
+                page: String,
+                armorClass: Int,
+                diceExpr: String,
+                experiencePoints: Int) : this(id, name, page, armorClass, Dice.parse(diceExpr), experiencePoints)
 }

@@ -36,7 +36,7 @@ $('a.remove-button').on('click', function (evt) {
 
 $('a[href="#add-monster"]').on('click', function (evt) {
     var dialog = $('#add-monster');
-    $('input[name=initiative]', dialog).val(d20());
+    $('form.adhoc-monster input[name=initiative]', dialog).val(d20());
     dialog.modal();
 });
 
@@ -45,13 +45,13 @@ $('#add-monster button.btn-primary').on('click', function (evt) {
 
     var form = $('#add-monster div.active form');
 
-    var type = $('input[name=type]', form).val();
-    var initiative = parseInt($('input[name=initiative]', form).val());
+    var type = $('form.adhoc-monster input[name=type]', form).val();
+    var initiative = parseInt($('form.adhoc-monster input[name=initiative]', form).val());
 
-    var description = $('input[name=description]', form).val();
-    var armorClass = parseInt($('input[name=ac]', form).val());
-    var hitPoints = parseInt($('input[name=hp]', form).val());
-    var xp = parseInt($('input[name=xp]', form).val());
+    var description = $('form.adhoc-monster input[name=description]', form).val();
+    var armorClass = parseInt($('form.adhoc-monster input[name=ac]', form).val());
+    var hitPoints = parseInt($('form.adhoc-monster input[name=hp]', form).val());
+    var xp = parseInt($('form.adhoc-monster input[name=xp]', form).val());
 
     $.ajax({
         url: '/encounter/' + encounterId,
