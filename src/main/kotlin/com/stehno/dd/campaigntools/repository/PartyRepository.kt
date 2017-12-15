@@ -27,42 +27,32 @@ class PartyRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
 
     companion object {
         private const val RETRIEVE_ALL_SQL = "SELECT id,character_name,player_name,class_level,race,alignment,armor_class,perception FROM party_member"
-        private const val RETRIEVE_ONE_SUFFIX = "where id=?"
         private const val REMOVE_SQL = "DELETE FROM party_member WHERE id=?"
         private const val INSERT_SQL = "INSERT INTO party_member (character_name,player_name,class_level,race,alignment,armor_class,perception) VALUES (?,?,?,?,?,?,?)"
+        private const val UPDATE_SQL = "UPDATE party_member SET character_name=?,player_name=?,class_level=?,race=?,alignment=?,armor_class=?,perception=? WHERE id=?"
     }
 
-    fun add(member: PartyMember) {
-        jdbcTemplate.update(
-            INSERT_SQL,
-            member.characterName,
-            member.playerName,
-            member.classLevel,
-            member.race,
-            member.alignment,
-            member.armorClass,
-            member.perception
-        )
-    }
+    fun add(member: PartyMember) = jdbcTemplate.update(
+        INSERT_SQL,
+        member.characterName,
+        member.playerName,
+        member.classLevel,
+        member.race,
+        member.alignment,
+        member.armorClass,
+        member.perception
+    )
 
-    fun remove(memberId: Long) {
-        jdbcTemplate.update(REMOVE_SQL, memberId)
-    }
+    fun remove(memberId: Long) = jdbcTemplate.update(REMOVE_SQL, memberId)
 
-    fun retrieveAll(): List<PartyMember> {
-        return jdbcTemplate.query(RETRIEVE_ALL_SQL, PartyMemberRowMapper.INSTANCE)
-    }
+    fun retrieveAll(): List<PartyMember> = jdbcTemplate.query(RETRIEVE_ALL_SQL, PartyMemberRowMapper.INSTANCE)
 
-    fun retrieve(memberId: Long): PartyMember {
-        return jdbcTemplate.queryForObject("$RETRIEVE_ALL_SQL $RETRIEVE_ONE_SUFFIX", PartyMemberRowMapper.INSTANCE, memberId)
-    }
+    fun retrieve(memberId: Long): PartyMember = jdbcTemplate.queryForObject("$RETRIEVE_ALL_SQL where id=?", PartyMemberRowMapper.INSTANCE, memberId)
 
-    fun update(member: PartyMember) {
-        jdbcTemplate.update(
-            "UPDATE party_member SET character_name=?,player_name=?,class_level=?,race=?,alignment=?,armor_class=?,perception=? WHERE id=?",
-            member.characterName, member.playerName, member.classLevel, member.race, member.alignment, member.armorClass, member.perception, member.id
-        )
-    }
+    fun update(member: PartyMember) = jdbcTemplate.update(
+        UPDATE_SQL,
+        member.characterName, member.playerName, member.classLevel, member.race, member.alignment, member.armorClass, member.perception, member.id
+    )
 }
 
 class PartyMemberRowMapper : RowMapper<PartyMember> {

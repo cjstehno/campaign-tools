@@ -47,7 +47,7 @@ class PartyController(@Autowired private val partyService: PartyService) {
     }
 
     @PostMapping(path = ["/party/{memberId}"])
-    fun addMember(@PathVariable("memberId") memberId: Long, @RequestBody member: PartyMember): ResponseEntity<Unit> {
+    fun updateMember(@PathVariable("memberId") memberId: Long, @RequestBody member: PartyMember): ResponseEntity<Unit> {
         if (memberId == member.id) {
             partyService.updateMember(member)
         }

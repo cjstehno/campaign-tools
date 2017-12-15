@@ -53,8 +53,12 @@
                     <th>Name</th>
                     <th>Round</th>
                     <th># Participants</th>
-                    <td>Experience Points</td>
-                    <th>&nbsp;</th>
+                    <th>Experience Points</th>
+                    <th>
+                        <div class="pull-right">
+                            <a href="#add-encounter" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-plus"></span> Add Encounter</a>
+                        </div>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
@@ -72,22 +76,17 @@
                         <td><#if encounter.round?? >${encounter.round}<#else><em>Not started</em></#if></td>
                         <td>${encounter.participants?size}</td>
                         <td>${encounter.totalExperience}</td>
-                        <td class="pull-right">
-                            <a href="#remove-encounter" class="btn btn-danger btn-sm" role="button"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                        <td>
+                            <div class="pull-right">
+                                <a href="#remove-encounter" class="btn btn-danger btn-sm" role="button"><span
+                                    class="glyphicon glyphicon-remove"></span> Delete</a>
+                            </div>
                         </td>
                     </tr>
                     </#list>
 
                 </tbody>
             </table>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="pull-right">
-                <a href="#add-encounter" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus"></span> Add Encounter</a>
-            </div>
         </div>
     </div>
 

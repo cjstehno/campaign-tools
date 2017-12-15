@@ -29,25 +29,15 @@ import java.lang.System.currentTimeMillis
 class PartyService(@Autowired private val repository: PartyRepository,
                    @Autowired private val objectMapper: ObjectMapper) {
 
-    fun retrieveAll(): List<PartyMember> {
-        return repository.retrieveAll()
-    }
+    fun retrieveAll(): List<PartyMember> = repository.retrieveAll()
 
-    fun retrieveMember(memberId: Long): PartyMember {
-        return repository.retrieve(memberId)
-    }
+    fun retrieveMember(memberId: Long): PartyMember = repository.retrieve(memberId)
 
-    fun addMember(member: PartyMember) {
-        repository.add(member)
-    }
+    fun addMember(member: PartyMember) = repository.add(member)
 
-    fun removeMember(memberId: Long) {
-        repository.remove(memberId)
-    }
+    fun removeMember(memberId: Long) = repository.remove(memberId)
 
-    fun updateMember(member: PartyMember) {
-        repository.update(member)
-    }
+    fun updateMember(member: PartyMember) = repository.update(member)
 
     fun exportMembers(): File {
         val file = File(System.getProperty("temp.dir"), "party-export-${currentTimeMillis()}.json")
@@ -57,9 +47,7 @@ class PartyService(@Autowired private val repository: PartyRepository,
         return file
     }
 
-    fun importMembers(input: InputStream) {
-        objectMapper.readValue<List<PartyMember>>(input).forEach { m ->
-            repository.add(m)
-        }
+    fun importMembers(input: InputStream) = objectMapper.readValue<List<PartyMember>>(input).forEach { m ->
+        repository.add(m)
     }
 }

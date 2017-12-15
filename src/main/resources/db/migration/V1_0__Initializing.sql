@@ -52,4 +52,13 @@ CREATE TABLE IF NOT EXISTS encounter_timers (
   description  VARCHAR(25) NOT NULL,
   start_round  INT         NOT NULL,
   end_round    INT         NOT NULL
-)
+);
+
+CREATE TABLE IF NOT EXISTS monsters (
+  id                BIGINT PRIMARY KEY AUTO_INCREMENT,
+  name              VARCHAR(30) NOT NULL,
+  page              VARCHAR(10) NOT NULL,
+  armor_class       INT         NOT NULL,
+  hit_dice          VARCHAR(10) NOT NULL,
+  experience_points INT         NOT NULL
+);

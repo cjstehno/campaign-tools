@@ -26,7 +26,6 @@ import spock.lang.Specification
 
 class PartyServiceTest extends Specification {
 
-    @Rule TemporaryFolder folder = new TemporaryFolder()
     @Rule TestingDatabase database = new TestingDatabase()
 
     private final PartyRepository repository = new PartyRepository(database.template)
