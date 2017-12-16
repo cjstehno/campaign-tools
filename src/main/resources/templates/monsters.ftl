@@ -180,7 +180,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><img src="/img/evil-minion.png" style="width: 32px;"/> Remove Party Member?</h4>
+                <h4 class="modal-title"><img src="/img/evil-minion.png" style="width: 32px;"/> Remove Monster?</h4>
             </div>
             <div class="modal-body">
 
@@ -200,15 +200,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><img src="/img/evil-minion.png" style="width: 32px;"/> Import Party Members</h4>
+                <h4 class="modal-title"><img src="/img/evil-minion.png" style="width: 32px;"/> Import Monsters</h4>
             </div>
             <div class="modal-body">
 
-                <form action="/party/import" method="post" enctype="multipart/form-data">
+                <form action="/monster/import" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="file">File input</label>
                         <input type="file" name="file" id="file">
-                        <p class="help-block">Choose a party JSON file to import.</p>
+                        <p class="help-block">Choose a monster JSON file to import.</p>
                     </div>
                 </form>
 

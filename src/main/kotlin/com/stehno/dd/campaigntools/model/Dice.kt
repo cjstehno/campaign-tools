@@ -34,7 +34,7 @@ data class Dice(private val rolls: Int, private val die: Int, private val modifi
 
             return Dice(
                 when {
-                    r.isBlank() -> 0
+                    r.isBlank() -> 1
                     else -> parseInt(r.trim())
                 },
                 parseInt(d.trim()),
@@ -42,12 +42,7 @@ data class Dice(private val rolls: Int, private val die: Int, private val modifi
             )
         }
 
-        private fun toi(str: String?, defval: String = "0"): Int {
-            return parseInt(when {
-                str.isNullOrBlank() -> defval.trim()
-                else -> str!!.trim()
-            })
-        }
+        val D20 = parse("d20")
     }
 
     fun roll() = (0 until rolls).map { rng.nextInt(die) + 1 }.sum() + modifier

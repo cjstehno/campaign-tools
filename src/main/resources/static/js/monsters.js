@@ -18,39 +18,6 @@ $('a[href="#add-monster"]').on('click', function (evt) {
     $('#add-monster-dialog').modal();
 });
 
-function inputValue(name, parent) {
-    return parent.find(`input[name=${name}]`).val();
-}
-
-function inputIntValue(name, parent) {
-    return parseInt(inputValue(name, parent));
-}
-
-const http = {
-    post: function (path, redirectTo, payload) {
-        $.ajax({
-            url: path,
-            type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(payload),
-            success: function (result) {
-                location = redirectTo;
-            }
-        });
-    },
-
-    delete: function (path, redirectTo) {
-        $.ajax({
-            url: path,
-            type: 'DELETE',
-            success: function (result) {
-                location = redirectTo;
-            }
-        });
-    }
-};
-
 $('#add-monster-dialog .btn-primary').on('click', function (evt) {
     const form = $('#add-monster-dialog');
     const name = inputValue('name', form);

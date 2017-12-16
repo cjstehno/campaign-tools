@@ -41,6 +41,7 @@ class MonsterService(@Autowired private val repository: MonsterRepository,
 
     fun exportMonsters(): File {
         val file = File(System.getProperty("temp.dir"), "monster-export-${System.currentTimeMillis()}.json")
+        file.deleteOnExit()
 
         objectMapper.writeValue(file, repository.retrieveAll())
 

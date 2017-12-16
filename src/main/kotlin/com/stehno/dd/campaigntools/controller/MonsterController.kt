@@ -15,10 +15,14 @@
  */
 package com.stehno.dd.campaigntools.controller
 
+import com.stehno.dd.campaigntools.model.Dice
+import com.stehno.dd.campaigntools.model.EncounterParticipant
 import com.stehno.dd.campaigntools.model.Monster
+import com.stehno.dd.campaigntools.model.ParticipantType.MONSTER
 import com.stehno.dd.campaigntools.service.MonsterService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.util.FileCopyUtils
@@ -55,12 +59,12 @@ class MonsterController {
         return ResponseEntity.ok(Unit)
     }
 
-    @GetMapping(path = ["/monster/export"], produces = [(MediaType.APPLICATION_JSON_VALUE)])
+    @GetMapping(path = ["/monster/export"], produces = [APPLICATION_JSON_VALUE])
     @ResponseBody
     fun exportMonsters(response: HttpServletResponse) {
         val exportFile = monsterService.exportMonsters()
 
-        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.contentType = APPLICATION_JSON_VALUE
         response.setHeader("Content-Disposition", "attachment; filename=monster-export.json")
         response.setHeader("Content-Length", exportFile.length().toString())
 
@@ -74,5 +78,22 @@ class MonsterController {
         }
 
         return "redirect:/monster"
+    }
+
+    @GetMapping(path = ["/monster/{monsterId}/participant"], produces = [APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun monsterParticipant(@PathVariable("monsterId") monsterId: Long): EncounterParticipant {
+        val monster = monsterService.retrieveMonster(monsterId)
+        return EncounterParticipant(
+            null,
+            monsterId,
+            MONSTER,
+            Dice.D20.roll(),
+            monster.name,
+            monster.armorClass,
+            monster.hitDice.roll(),
+            setOf(),
+            monster.experiencePoints
+        )
     }
 }

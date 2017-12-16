@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 $('#remove-monster button.btn-danger').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
-    var participantId = $('#remove-monster').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
+    const participantId = $('#remove-monster').attr('data-id');
 
     $.ajax({
         url: '/encounter/' + encounterId + '/' + participantId,
@@ -27,58 +27,54 @@ $('#remove-monster button.btn-danger').on('click', function (evt) {
 });
 
 $('a.remove-button').on('click', function (evt) {
-    var participantId = $(evt.target).closest('tr').attr('data-id');
+    const participantId = $(evt.target).closest('tr').attr('data-id');
 
-    var dialog = $('#remove-monster');
+    const dialog = $('#remove-monster');
     dialog.attr('data-id', participantId);
     dialog.modal();
 });
 
 $('a[href="#add-monster"]').on('click', function (evt) {
-    var dialog = $('#add-monster');
-    $('form.adhoc-monster input[name=initiative]', dialog).val(d20());
+    const dialog = $('#add-monster');
+    $('form input[name=initiative]', dialog).val(d20());
     dialog.modal();
 });
 
+$('#monster-existing-panel select').on('change', function (evt) {
+    const elt = $(evt.target);
+    const monsterId = elt.val();
+
+    http.get(`/monster/${monsterId}/participant`, function (monster) {
+        const form = new Form('#add-monster div.active form');
+        form.text('description', monster.description);
+        form.text('initiative', monster.initiative);
+        form.text('ac', monster.armorClass);
+        form.text('hp', monster.hitPoints);
+        form.text('xp', monster.experiencePoints);
+    });
+});
+
 $('#add-monster button.btn-primary').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
+    const form = new Form('#add-monster div.active form');
 
-    var form = $('#add-monster div.active form');
-
-    var type = $('form.adhoc-monster input[name=type]', form).val();
-    var initiative = parseInt($('form.adhoc-monster input[name=initiative]', form).val());
-
-    var description = $('form.adhoc-monster input[name=description]', form).val();
-    var armorClass = parseInt($('form.adhoc-monster input[name=ac]', form).val());
-    var hitPoints = parseInt($('form.adhoc-monster input[name=hp]', form).val());
-    var xp = parseInt($('form.adhoc-monster input[name=xp]', form).val());
-
-    $.ajax({
-        url: '/encounter/' + encounterId,
-        type: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify({
-            id: 0,
-            active: false,
-            type: type,
-            initiative: initiative,
-            description: description,
-            armorClass: armorClass,
-            hitPoints: hitPoints,
-            conditions: [],
-            experiencePoints: xp
-        }),
-        success: function (result) {
-            location = '/encounter/' + encounterId;
-        }
+    http.post(`/encounter/${encounterId}`, `/encounter/${encounterId}`, {
+        id: 0,
+        active: false,
+        type: form.text('type'),
+        initiative: form.textInt('initiative'),
+        description: form.text('description'),
+        armorClass: form.textInt('ac'),
+        hitPoints: form.textInt('hp'),
+        conditions: [],
+        experiencePoints: form.textInt('xp')
     });
 });
 
 $('a.add-party-member-button').on('click', function (evt) {
-    var memberId = $(evt.target).closest('tr').attr('data-id');
+    const memberId = $(evt.target).closest('tr').attr('data-id');
 
-    var dialog = $('#initiative-dialog');
+    const dialog = $('#initiative-dialog');
     dialog.attr('data-id', memberId);
 
     $('input[name=initiative]', dialog).val(d20());
@@ -87,11 +83,11 @@ $('a.add-party-member-button').on('click', function (evt) {
 });
 
 $('#initiative-dialog button.btn-primary').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
 
-    var dialog = $('#initiative-dialog');
-    var memberId = dialog.attr('data-id');
-    var initiative = dialog.find('form input[name=initiative]').val();
+    const dialog = $('#initiative-dialog');
+    const memberId = dialog.attr('data-id');
+    const initiative = dialog.find('form input[name=initiative]').val();
 
     $.ajax({
         url: '/encounter/' + encounterId + "/party/",
@@ -106,9 +102,9 @@ $('#initiative-dialog button.btn-primary').on('click', function (evt) {
 });
 
 var d20 = function (times, adjustment) {
-    var value = 0;
+    let value = 0;
 
-    for (var i = 0; i < (times | 1); i++) {
+    for (let i = 0; i < (times | 1); i++) {
         value += (Math.round(Math.random() * 100) % 20 + (adjustment | 0))
     }
 
@@ -116,16 +112,16 @@ var d20 = function (times, adjustment) {
 };
 
 $('td.participant-hp').on('dblclick', function (evt) {
-    var elt = $(evt.target);
-    var participantId = $(evt.target).closest('tr').attr('data-id');
-    var value = elt.text();
+    const elt = $(evt.target);
+    const participantId = $(evt.target).closest('tr').attr('data-id');
+    const value = elt.text();
 
     elt.replaceWith('<td class="participant-hp"><input type="number" style="width:3em" value="' + value + '"/></td>');
 
-    var newElt = $('td.participant-hp input');
+    const newElt = $('td.participant-hp input');
 
-    var savingFx = function () {
-        var encounterId = $('h1[data-id]').attr('data-id');
+    const savingFx = function () {
+        const encounterId = $('h1[data-id]').attr('data-id');
 
         $.ajax({
             url: '/encounter/' + encounterId + '/' + participantId + '/hp',
@@ -150,16 +146,16 @@ $('td.participant-hp').on('dblclick', function (evt) {
 });
 
 $('td.participant-description').on('dblclick', function (evt) {
-    var elt = $(evt.target);
-    var participantId = $(evt.target).closest('tr').attr('data-id');
-    var value = elt.text();
+    const elt = $(evt.target);
+    const participantId = $(evt.target).closest('tr').attr('data-id');
+    const value = elt.text();
 
     elt.replaceWith('<td class="participant-description"><input type="text" style="width:10em" value="' + value + '"/></td>');
 
-    var newElt = $('td.participant-description input');
+    const newElt = $('td.participant-description input');
 
-    var savingFx = function () {
-        var encounterId = $('h1[data-id]').attr('data-id');
+    const savingFx = function () {
+        const encounterId = $('h1[data-id]').attr('data-id');
 
         $.ajax({
             url: '/encounter/' + encounterId + '/' + participantId + '/description',
@@ -184,26 +180,26 @@ $('td.participant-description').on('dblclick', function (evt) {
 });
 
 $('a.adjust-hp-button').on('click', function (evt) {
-    var elt = $(evt.target);
-    var participantId = elt.closest('tr').attr('data-id');
-    var currentHp = elt.closest('tr').find('td.participant-hp').text();
+    const elt = $(evt.target);
+    const participantId = elt.closest('tr').attr('data-id');
+    const currentHp = elt.closest('tr').find('td.participant-hp').text();
 
     console.log("current hp: " + currentHp);
 
-    var dialog = $('#hp-adjust-dialog');
+    const dialog = $('#hp-adjust-dialog');
     dialog.attr('data-id', participantId);
     $('input[name=current]', dialog).val(currentHp);
     dialog.modal();
 });
 
 $('#hp-adjust-dialog button.btn-primary').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
 
-    var dialog = $('#hp-adjust-dialog');
-    var participantId = dialog.attr('data-id');
-    var hpCurrent = parseInt(dialog.find('form input[name=current]').val());
-    var hpDecrease = parseInt(dialog.find('form input[name=reduce]').val());
-    var hpIncrease = parseInt(dialog.find('form input[name=increase]').val());
+    const dialog = $('#hp-adjust-dialog');
+    const participantId = dialog.attr('data-id');
+    const hpCurrent = parseInt(dialog.find('form input[name=current]').val());
+    const hpDecrease = parseInt(dialog.find('form input[name=reduce]').val());
+    const hpIncrease = parseInt(dialog.find('form input[name=increase]').val());
 
     $.ajax({
         url: '/encounter/' + encounterId + '/' + participantId + '/hp',
@@ -218,18 +214,18 @@ $('#hp-adjust-dialog button.btn-primary').on('click', function (evt) {
 });
 
 $('a.conditions-button').on('click', function (evt) {
-    var elt = $(evt.target);
-    var participantId = elt.closest('tr').attr('data-id');
+    const elt = $(evt.target);
+    const participantId = elt.closest('tr').attr('data-id');
 
-    var dialog = $('#conditions-dialog');
+    const dialog = $('#conditions-dialog');
     dialog.attr('data-id', participantId);
 
     $('input[name=conditions]', dialog).prop('checked', false);
 
-    var conditions = elt.closest('tr').find('td[data-conditions]').attr('data-conditions');
+    const conditions = elt.closest('tr').find('td[data-conditions]').attr('data-conditions');
     if (conditions) {
-        var items = conditions.trim().split(' ');
-        for (var i = 0; i < items.length; i++) {
+        const items = conditions.trim().split(' ');
+        for (let i = 0; i < items.length; i++) {
             $('input[value=' + items[i] + ']', dialog).prop('checked', true);
         }
     }
@@ -238,13 +234,13 @@ $('a.conditions-button').on('click', function (evt) {
 });
 
 $('#conditions-dialog button.btn-primary').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
 
-    var dialog = $('#conditions-dialog');
-    var participantId = dialog.attr('data-id');
+    const dialog = $('#conditions-dialog');
+    const participantId = dialog.attr('data-id');
     // var conditions = $('input[name=conditions]:checked', dialog).val();
 
-    var conditions = $('input:checkbox:checked').map(function () {
+    const conditions = $('input:checkbox:checked').map(function () {
         return this.value;
     }).get();
 
@@ -264,7 +260,7 @@ $('#conditions-dialog button.btn-primary').on('click', function (evt) {
 });
 
 $('a.start-button').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
 
     $.ajax({
         url: '/encounter/' + encounterId + '/start',
@@ -276,7 +272,7 @@ $('a.start-button').on('click', function (evt) {
 });
 
 $('a.next-button').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
 
     $.ajax({
         url: '/encounter/' + encounterId + '/next',
@@ -288,7 +284,7 @@ $('a.next-button').on('click', function (evt) {
 });
 
 $('a.finish-button').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
 
     $.ajax({
         url: '/encounter/' + encounterId + '/stop',
@@ -306,12 +302,12 @@ $('a[href="#add-timer"]').on('click', function (evt) {
 });
 
 $('#add-timer-dialog .btn-primary').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
 
-    var form = $('#add-timer-dialog');
-    var description = form.find('input[name=description]').val();
-    var startRound = parseInt(form.find('input[name=startRound]').val());
-    var duration = parseInt(form.find('input[name=duration]').val());
+    const form = $('#add-timer-dialog');
+    const description = form.find('input[name=description]').val();
+    const startRound = parseInt(form.find('input[name=startRound]').val());
+    const duration = parseInt(form.find('input[name=duration]').val());
 
     $.ajax({
         url: '/encounter/' + encounterId + '/timer',
@@ -330,16 +326,16 @@ $('#add-timer-dialog .btn-primary').on('click', function (evt) {
 });
 
 $('a[href="#remove-timer"]').on('click', function (evt) {
-    var timerId = $(evt.target).closest('tr').attr('data-id');
+    const timerId = $(evt.target).closest('tr').attr('data-id');
 
-    var dialog = $('#remove-timer-dialog');
+    const dialog = $('#remove-timer-dialog');
     dialog.attr('data-id', timerId);
     dialog.modal();
 });
 
 $('#remove-timer-dialog button.btn-danger').on('click', function (evt) {
-    var encounterId = $('h1[data-id]').attr('data-id');
-    var timerId = $('#remove-timer-dialog').attr('data-id');
+    const encounterId = $('h1[data-id]').attr('data-id');
+    const timerId = $('#remove-timer-dialog').attr('data-id');
 
     $.ajax({
         url: '/encounter/' + encounterId + '/timer/' + timerId,

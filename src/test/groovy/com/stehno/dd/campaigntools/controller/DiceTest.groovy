@@ -30,6 +30,7 @@ class DiceTest extends Specification {
 
         where:
         expr      || string
+        'd20'     || 'd20'
         '4d6+20'  || '4d6+20'
         '2d6'     || '2d6'
         '1d6'     || 'd6'
@@ -37,5 +38,10 @@ class DiceTest extends Specification {
         ' 3d6+2 ' || '3d6+2'
         '2d100'   || '2d100'
         '10d10'   || '10d10'
+    }
+
+    def 'roll 20'() {
+        expect:
+        Dice.D20.roll() in 1..20
     }
 }

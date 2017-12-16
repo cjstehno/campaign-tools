@@ -35,7 +35,7 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="monster-new-panel">
-                            <form class="adhoc-monster">
+                            <form>
                                 <input type="hidden" name="type" value="MONSTER"/>
                                 <div class="form-group">
                                     <label>Description</label>
@@ -61,14 +61,15 @@
                         </div>
 
                         <div role="tabpanel" class="tab-pane" id="monster-existing-panel">
-                            <form class="selected-monster">
+                            <form>
                                 <input type="hidden" name="type" value="MONSTER"/>
                                 <div class="form-group">
                                     <label>Monster Template</label>
-                                    <select class="form-control">
+                                    <select class="monster-template form-control">
+                                        <option value="-1">Select a Monster</option>
                                         <#if monsters??>
                                             <#list monsters as monster>
-                                                <option>${monster.name}</option>
+                                                <option value="${monster.id}">${monster.name}</option>
                                             </#list>
                                         </#if>
                                     </select>

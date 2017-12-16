@@ -41,6 +41,7 @@ class PartyService(@Autowired private val repository: PartyRepository,
 
     fun exportMembers(): File {
         val file = File(System.getProperty("temp.dir"), "party-export-${currentTimeMillis()}.json")
+        file.deleteOnExit()
 
         objectMapper.writeValue(file, repository.retrieveAll())
 
