@@ -23,7 +23,7 @@ class DiceTest extends Specification {
 
     @Unroll 'parse: #expr'() {
         when:
-        Dice dice = Dice.parse(expr)
+        Dice dice = new Dice(expr)
 
         then:
         dice.toString() == string
@@ -38,6 +38,7 @@ class DiceTest extends Specification {
         ' 3d6+2 ' || '3d6+2'
         '2d100'   || '2d100'
         '10d10'   || '10d10'
+        '22d8+44' || '22d8+44'
     }
 
     def 'roll 20'() {

@@ -38,7 +38,7 @@ class DiceController {
         val mav = ModelAndView("dice")
         mav.addObject("d", d)
 
-        val dice = Dice.parse(d)
+        val dice = Dice(d)
         mav.addObject("rolled", dice)
         mav.addObject("result", dice.roll())
         return mav

@@ -92,7 +92,7 @@ class EncounterRepository(@Autowired private val jdbcTemplate: JdbcTemplate) {
     }
 
     fun remove(encounterId: Long) {
-        if (jdbcTemplate.update(REMOVE_ENCOUNTER_SQL, encounterId) > 0 && jdbcTemplate.update(REMOVE_TIMERS_SQL, encounterId) > 0) {
+        if (jdbcTemplate.update(REMOVE_ENCOUNTER_SQL, encounterId) >= 0 && jdbcTemplate.update(REMOVE_TIMERS_SQL, encounterId) >= 0) {
             jdbcTemplate.update(REMOVE_PARTICIPANTS_SQL, encounterId)
         }
     }

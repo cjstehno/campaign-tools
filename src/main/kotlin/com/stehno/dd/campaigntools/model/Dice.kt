@@ -19,30 +19,32 @@ import java.lang.Integer.parseInt
 import java.security.SecureRandom
 import java.util.regex.Pattern
 
-data class Dice(private val rolls: Int, private val die: Int, private val modifier: Int) {
+data class Dice(private val expression: String) {
+
+    private val rolls: Int
+    private val die: Int
+    private val modifier: Int
+
+    init {
+        val (r, d, m) = when (expression.contains('+')) {
+            true -> expression
+            else -> "$expression+0"
+        }.split(PATTERN)
+
+
+        rolls = when {
+            r.isBlank() -> 1
+            else -> parseInt(r.trim())
+        }
+        die = parseInt(d.trim())
+        modifier = parseInt(m.trim())
+    }
 
     companion object {
         private val rng = SecureRandom()
         private val PATTERN = Pattern.compile("[d+]")
 
-        @JvmStatic
-        fun parse(expression: String): Dice {
-            val (r, d, m) = when (expression.contains('+')) {
-                true -> expression
-                else -> "$expression+0"
-            }.split(PATTERN)
-
-            return Dice(
-                when {
-                    r.isBlank() -> 1
-                    else -> parseInt(r.trim())
-                },
-                parseInt(d.trim()),
-                parseInt(m.trim())
-            )
-        }
-
-        val D20 = parse("d20")
+        val D20 = Dice("d20")
     }
 
     fun roll() = (0 until rolls).map { rng.nextInt(die) + 1 }.sum() + modifier

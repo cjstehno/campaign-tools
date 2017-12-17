@@ -28,5 +28,5 @@ data class Monster(val id: Long?,
                 page: String,
                 armorClass: Int,
                 diceExpr: String,
-                experiencePoints: Int) : this(id, name, page, armorClass, Dice.parse(diceExpr), experiencePoints)
+                experiencePoints: Int) : this(id, name, page, armorClass, Dice(diceExpr), experiencePoints)
 }
